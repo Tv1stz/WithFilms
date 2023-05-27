@@ -2,10 +2,9 @@ package com.example.withfilms.data.remote
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.example.withfilms.data.remote.model.Film
+import com.example.withfilms.data.remote.model.films.Film
 import retrofit2.HttpException
 import java.io.IOException
-import javax.inject.Inject
 
 class FilmPagingSource(
     private val filmService: FilmService

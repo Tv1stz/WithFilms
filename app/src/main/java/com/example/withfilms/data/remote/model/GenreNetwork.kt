@@ -1,5 +1,5 @@
 package com.example.withfilms.data.remote.model
 
-data class Genre(
+data class GenreNetwork(
     val genre: String
 )

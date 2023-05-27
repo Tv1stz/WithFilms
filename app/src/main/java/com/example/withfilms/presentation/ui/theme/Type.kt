@@ -41,7 +41,7 @@ val Typography = Typography(
     titleMedium = TextStyle(
         fontFamily = Lato,
         fontSize = 16.sp,
-        fontWeight = FontWeight.Normal
+        fontWeight = FontWeight.Bold
     ),
 
     //для clips

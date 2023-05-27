@@ -1,10 +1,12 @@
-package com.example.withfilms.presentation.homescreen
+package com.example.withfilms.presentation.filmsscreen
 
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.paging.cachedIn
 import com.example.withfilms.data.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -22,7 +24,7 @@ class FilmsViewModel @Inject constructor(
         search = request
     }
 
-    fun getFilm() = repository.getTopFilm()
+    fun getFilm() = repository.getTopFilm().cachedIn(viewModelScope)
 
 }
 

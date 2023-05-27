@@ -1,4 +1,4 @@
-package com.example.withfilms.presentation.homescreen
+package com.example.withfilms.presentation.filmsscreen
 
 
 import androidx.compose.foundation.background
@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -21,33 +22,40 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
-import com.example.withfilms.data.remote.model.Film
+import com.example.withfilms.data.remote.model.films.Film
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import androidx.paging.LoadState
 import androidx.paging.compose.itemContentType
 import androidx.paging.compose.itemKey
 import com.example.withfilms.presentation.ui.theme.RatingGreen
-import com.example.withfilms.presentation.ui.theme.WithFilmsTheme
 import com.example.withfilms.presentation.utils.CustomBottomAppBar
 import com.example.withfilms.presentation.utils.CustomTextField
 
 @ExperimentalMaterial3Api
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(
-    viewModel: FilmsViewModel = hiltViewModel()
+fun FilmsScreen(
+    viewModel: FilmsViewModel = hiltViewModel(),
+    onFilmClick: (id: Long) -> Unit,
 ) {
+
+
     val films =
         viewModel.getFilm().collectAsLazyPagingItems()
+
+
+
+
     Scaffold(
         bottomBar = { CustomBottomAppBar() }
-    ) {contentPadding ->
+    ) { contentPadding ->
         Box(modifier = Modifier.padding(contentPadding)) {
             Column {
                 Text(
@@ -60,16 +68,39 @@ fun MainScreen(
                     onUserRequestChanged = { viewModel.searchFilms(it) }
                 )
                 Spacer(modifier = Modifier.height(10.dp))
-                FilmsList(films = films)
+
+                when (films.loadState.refresh) {
+                    is LoadState.Loading -> {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    }
+
+                    is LoadState.Error -> {
+                        Box(contentAlignment = Alignment.Center) {
+                            Text(text = "Error")
+                        }
+                    }
+
+                    is LoadState.NotLoading -> {
+                        FilmsList(films = films, onFilmClick = onFilmClick)
+                    }
+                }
+
             }
         }
     }
 
 }
 
+
 @Composable
 fun FilmsList(
-    films: LazyPagingItems<Film>
+    films: LazyPagingItems<Film>,
+    onFilmClick: (id: Long) -> Unit,
 ) {
 
     LazyVerticalGrid(
@@ -84,6 +115,7 @@ fun FilmsList(
             film?.let {
                 FilmItem(
                     film = film,
+                    onFilmClick = onFilmClick,
                     Modifier
                         .padding(10.dp),
                 )
@@ -95,22 +127,24 @@ fun FilmsList(
 @Composable
 fun FilmItem(
     film: Film,
+    onFilmClick: (id: Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Box(modifier = modifier,
+    Box(
+        modifier = modifier,
         contentAlignment = Alignment.Center,
     ) {
         Surface(
             modifier = Modifier
-                .width(145.dp)
+                .width(155.dp)
                 .height(250.dp),
         ) {
-            Box(modifier = Modifier.width(145.dp)) {
+            Box(modifier = Modifier.width(155.dp)) {
                 Column(
                     modifier = Modifier
-                        .width(140.dp)
+                        .width(150.dp)
                         .align(Alignment.TopEnd)
-                        .clickable {  },
+                        .clickable { onFilmClick(film.filmId.toLong()) },
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     AsyncImage(
@@ -155,7 +189,7 @@ fun RatingView(
     }
 }
 
-@Preview(showBackground = true)
+/*@Preview(showBackground = true)
 @Composable
 fun FilmItemPreview() {
     WithFilmsTheme {
@@ -176,7 +210,7 @@ fun FilmItemPreview() {
             )
         )
     }
-}
+}*/
 
 
 
