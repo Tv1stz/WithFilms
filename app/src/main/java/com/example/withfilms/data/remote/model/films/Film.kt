@@ -1,10 +1,13 @@
-package com.example.withfilms.data.remote.model
+package com.example.withfilms.data.remote.model.films
+
+import com.example.withfilms.data.remote.model.Country
+import com.example.withfilms.data.remote.model.GenreNetwork
 
 data class Film(
     val countries: List<Country>,
     val filmId: Int,
     val filmLength: String,
-    val genres: List<Genre>,
+    val genres: List<GenreNetwork>,
     val nameEn: String,
     val nameRu: String,
     val posterUrl: String,
