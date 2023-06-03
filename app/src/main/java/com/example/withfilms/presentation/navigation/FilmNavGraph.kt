@@ -7,7 +7,9 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.withfilms.presentation.filmdetailscreen.FilmDetailScreen
+import com.example.withfilms.presentation.filmdetail.DescriptionScreen
+import com.example.withfilms.presentation.filmdetail.FilmDetailScreen
+import com.example.withfilms.presentation.filmdetail.FilmStaffScreen
 import com.example.withfilms.presentation.filmsscreen.FilmsScreen
 
 
@@ -35,14 +37,41 @@ fun FilmNavGraph(
         composable(
             route = "filmDetail/{filmId}",
             arguments = listOf(
-                navArgument("filmId") { type  = NavType.LongType},
+                navArgument("filmId") { type = NavType.LongType },
             )
-        ) {backStackEntry ->
+        ) { backStackEntry ->
             val id = backStackEntry.arguments?.getLong("filmId") ?: 0
 
             FilmDetailScreen(
                 id = id,
+                onBackClick = navController::popBackStack,
+                onDescriptionClick = {
+                    navController.navigateToDescriptionFilm(description = it)
+                },
+                onShowMoreStaffClick = {
+                    navController.navigateToFilmStaff()
+                }
+            )
+        }
+        composable(
+            route = "filmDescription/{description}",
+            arguments = listOf(
+                navArgument("description") {type = NavType.StringType}
+            )
+        ) {backStackEntry ->
+            val description = backStackEntry.arguments?.getString("description")
+
+            DescriptionScreen(
+                description = description ?: "",
                 onBackClick = navController::popBackStack
+            )
+        }
+        composable(
+            route = "filmStaff"
+        ) {
+            FilmStaffScreen(
+                onBackClick = navController::popBackStack
+
             )
         }
     }

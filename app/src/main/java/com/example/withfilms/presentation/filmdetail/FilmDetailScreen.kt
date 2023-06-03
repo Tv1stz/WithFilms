@@ -1,4 +1,4 @@
-package com.example.withfilms.presentation.filmdetailscreen
+package com.example.withfilms.presentation.filmdetail
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
@@ -31,6 +30,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -39,22 +39,24 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.example.withfilms.R
-import com.example.withfilms.domain.model.FilmStaff
+import com.example.withfilms.domain.model.Staff
 import com.example.withfilms.domain.model.Genre
 import com.example.withfilms.presentation.ui.theme.WithFilmsTheme
+import com.example.withfilms.presentation.utils.ShowMoreButton
 
 @Composable
 fun FilmDetailScreen(
     id: Long,
     onBackClick: () -> Unit,
-    viewModel: FilmDetailViewModel = hiltViewModel()
+    viewModel: FilmDetailViewModel = hiltViewModel(),
+    onDescriptionClick: (description: String) -> Unit,
+    onShowMoreStaffClick: () -> Unit
 ) {
     LaunchedEffect(true) {
         viewModel.onStart(id)
     }
 
     val filmDetail by viewModel.filmUiState.collectAsStateWithLifecycle()
-    val filmStaff by viewModel.filmStaffUiState.collectAsStateWithLifecycle()
 
     if (filmDetail.isLoading) {
         Box(
@@ -75,7 +77,9 @@ fun FilmDetailScreen(
             poster = filmDetail.poster,
             genres = filmDetail.genres,
             onBackClick = onBackClick,
-            actors = filmStaff.staff
+            actors = filmDetail.staff,
+            onDescriptionClick = onDescriptionClick,
+            onShowMoreStaffClick = onShowMoreStaffClick
         )
     }
 
@@ -92,7 +96,9 @@ fun FilmDetailItem(
     poster: String,
     genres: List<Genre>,
     onBackClick: () -> Unit = {},
-    actors: List<FilmStaff>
+    actors: List<Staff>,
+    onDescriptionClick: (description: String) -> Unit,
+    onShowMoreStaffClick: () -> Unit
 ) {
     Column {
         Box {
@@ -134,8 +140,14 @@ fun FilmDetailItem(
             }
         }
 
-        FilmDescription(filmDescription = filmDescription)
-        ActorsList(actors)
+        FilmDescription(
+            filmDescription = filmDescription,
+            onDescriptionClick = onDescriptionClick
+        )
+        ActorsList(
+            actors = actors,
+            onShowMoreStaffClick = onShowMoreStaffClick
+        )
     }
 
 }
@@ -213,7 +225,8 @@ fun GenreItem(
 
 @Composable
 fun FilmDescription(
-    filmDescription: String
+    filmDescription: String,
+    onDescriptionClick: (description: String) -> Unit,
 ) {
     Column {
         Text(
@@ -222,7 +235,7 @@ fun FilmDescription(
             modifier = Modifier.padding(top = 14.dp, start = 16.dp)
         )
         Box(
-            modifier = Modifier.clickable { }
+            modifier = Modifier.clickable { onDescriptionClick(filmDescription) }
         ) {
             Column(
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 9.dp)
@@ -235,6 +248,7 @@ fun FilmDescription(
                 )
                 Text(
                     text = "Читать далее",
+                    fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(start = 16.dp)
                 )
@@ -246,19 +260,31 @@ fun FilmDescription(
 
 @Composable
 fun ActorsList(
-    actors: List<FilmStaff>
+    actors: List<Staff>,
+    onShowMoreStaffClick: () -> Unit
+
 ) {
-    Column() {
+    Column {
         Text(
             text = "Актеры",
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.padding(start = 16.dp, top = 15.dp, bottom = 8.dp)
         )
         LazyRow {
-            items(items = actors, key = { it.staffId }) {
+            items(
+                items = actors
+                    .subList(0, 15)
+                    .filter { it.professionKey == "ACTOR" },
+                key = { it.staffId }
+            ) {
                 ActorsItem(
                     actorPoster = it.posterUrl,
                     actorName = it.nameRu
+                )
+            }
+            item {
+                ShowMoreButton(
+                    onShowMoreClick = onShowMoreStaffClick
                 )
             }
         }

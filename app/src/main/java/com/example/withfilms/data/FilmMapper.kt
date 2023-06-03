@@ -4,7 +4,7 @@ import com.example.withfilms.data.remote.model.GenreNetwork
 import com.example.withfilms.data.remote.model.filmdetail.FilmDetailDto
 import com.example.withfilms.data.remote.model.filmstaff.FilmStaffDto
 import com.example.withfilms.domain.model.FilmDetail
-import com.example.withfilms.domain.model.FilmStaff
+import com.example.withfilms.domain.model.Staff
 import com.example.withfilms.domain.model.Genre
 
 fun FilmDetailDto.toFilmDetail() = FilmDetail(
@@ -19,8 +19,8 @@ fun FilmDetailDto.toFilmDetail() = FilmDetail(
     poster = posterUrl
 )
 
-fun FilmStaffDto.toFilmStaff() = FilmStaff(
-    description =description,
+fun FilmStaffDto.toFilmStaff() = Staff(
+    description = description,
     nameEn = nameEn,
     nameRu = nameRu,
     posterUrl = posterUrl,

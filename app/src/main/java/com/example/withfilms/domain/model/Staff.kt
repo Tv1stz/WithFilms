@@ -1,6 +1,6 @@
 package com.example.withfilms.domain.model
 
-data class FilmStaff(
+data class Staff(
     val description: String?,
     val nameEn: String,
     val nameRu: String,

@@ -19,11 +19,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.paging.compose.LazyPagingItems
-import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.example.withfilms.data.remote.model.films.Film
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -31,9 +30,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.sp
-import androidx.paging.LoadState
-import androidx.paging.compose.itemContentType
-import androidx.paging.compose.itemKey
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.withfilms.presentation.ui.theme.RatingGreen
 import com.example.withfilms.presentation.utils.CustomBottomAppBar
 import com.example.withfilms.presentation.utils.CustomTextField
@@ -46,12 +43,8 @@ fun FilmsScreen(
     onFilmClick: (id: Long) -> Unit,
 ) {
 
-
-    val films =
-        viewModel.getFilm().collectAsLazyPagingItems()
-
-
-
+    val state = viewModel.filmUiState.collectAsStateWithLifecycle()
+    val films = state.value.filmList
 
     Scaffold(
         bottomBar = { CustomBottomAppBar() }
@@ -60,7 +53,7 @@ fun FilmsScreen(
             Column {
                 Text(
                     text = "With Films",
-                    style = MaterialTheme.typography.titleLarge,
+                    style = MaterialTheme.typography.headlineSmall,
                     modifier = Modifier.padding(start = 19.dp, top = 5.dp, bottom = 9.dp)
                 )
                 CustomTextField(
@@ -68,59 +61,40 @@ fun FilmsScreen(
                     onUserRequestChanged = { viewModel.searchFilms(it) }
                 )
                 Spacer(modifier = Modifier.height(10.dp))
-
-                when (films.loadState.refresh) {
-                    is LoadState.Loading -> {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator()
-                        }
-                    }
-
-                    is LoadState.Error -> {
-                        Box(contentAlignment = Alignment.Center) {
-                            Text(text = "Error")
-                        }
-                    }
-
-                    is LoadState.NotLoading -> {
-                        FilmsList(films = films, onFilmClick = onFilmClick)
-                    }
-                }
-
+                FilmsList(films = films, onFilmClick = onFilmClick)
             }
         }
     }
-
 }
-
 
 @Composable
 fun FilmsList(
-    films: LazyPagingItems<Film>,
+    films: List<Film>,
     onFilmClick: (id: Long) -> Unit,
 ) {
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
+        modifier = Modifier.fillMaxSize(),
     ) {
-        items(
-            count = films.itemCount,
-            key = films.itemKey(),
-            contentType = films.itemContentType()
-        ) { index ->
-            val film = films[index]
-            film?.let {
-                FilmItem(
-                    film = film,
-                    onFilmClick = onFilmClick,
-                    Modifier
-                        .padding(10.dp),
-                )
-            }
+        items(items = films, key = {it.filmId}) {
+            FilmItem(
+                film = it,
+                onFilmClick = onFilmClick,
+                Modifier
+                    .padding(10.dp),
+            )
         }
+    }
+}
+
+@Composable
+fun LoadingFilms() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator()
     }
 }
 
@@ -171,7 +145,7 @@ fun FilmItem(
 
 @Composable
 fun RatingView(
-    rating: String,
+    rating: String?,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -182,35 +156,13 @@ fun RatingView(
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = rating,
+            text = rating ?: "0.0",
             fontSize = 10.sp,
             style = MaterialTheme.typography.titleMedium
         )
     }
 }
 
-/*@Preview(showBackground = true)
-@Composable
-fun FilmItemPreview() {
-    WithFilmsTheme {
-        FilmItem(
-            film = Film(
-                countries = emptyList(),
-                filmId = 121,
-                filmLength = "",
-                genres = emptyList(),
-                nameEn = "Avengers: Final",
-                nameRu = "Avengers: Final",
-                posterUrl = "",
-                posterUrlPreview = "",
-                rating = "9.1",
-                ratingChange = "",
-                ratingVoteCount = 1,
-                year = "2222"
-            )
-        )
-    }
-}*/
 
 
 

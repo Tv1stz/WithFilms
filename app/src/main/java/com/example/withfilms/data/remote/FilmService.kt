@@ -15,7 +15,7 @@ import retrofit2.http.Query
 
 
 private const val BASE_URL = "https://kinopoiskapiunofficial.tech/api/"
-private const val API_KEY = "c1193f3a-dba3-4cf4-bf0b-ba5d971f2773"
+private const val API_KEY = "cf90f99b-da85-43ad-8b29-35bf82b4f2d3"
 private const val TOP_250 = "TOP_250_BEST_FILMS"
 
 interface FilmService {
@@ -24,7 +24,7 @@ interface FilmService {
     suspend fun getTopFilms(
         @Header("X-API-KEY") key: String = API_KEY,
         @Query("type") type: String = TOP_250,
-        @Query("page") page: Int,
+        @Query("page") page: Int = 1,
     ): FilmDto
 
     @GET("v2.2/films/{id}")

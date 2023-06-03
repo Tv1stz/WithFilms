@@ -44,6 +44,12 @@ val Typography = Typography(
         fontWeight = FontWeight.Bold
     ),
 
+    titleLarge = TextStyle(
+        fontFamily = Lato,
+        fontSize = 20.sp,
+        fontWeight = FontWeight.Bold
+    ),
+
     //для clips
     labelMedium = TextStyle(
         fontFamily = Lato,
@@ -61,10 +67,9 @@ val Typography = Typography(
     bodyMedium = TextStyle(
         fontFamily = Lato,
         fontSize = 14.sp,
-        fontWeight = FontWeight.Bold,
         fontStyle = FontStyle.Italic
     ),
-    titleLarge = TextStyle(
+    headlineSmall = TextStyle(
         fontFamily = JotiOne,
         fontSize = 28.sp,
         fontWeight = FontWeight.Normal,
