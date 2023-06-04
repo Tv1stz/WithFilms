@@ -24,7 +24,7 @@ interface FilmService {
     suspend fun getTopFilms(
         @Header("X-API-KEY") key: String = API_KEY,
         @Query("type") type: String = TOP_250,
-        @Query("page") page: Int = 1,
+        @Query("page") page: Int,
     ): FilmDto
 
     @GET("v2.2/films/{id}")

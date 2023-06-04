@@ -20,9 +20,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
-import com.example.withfilms.data.remote.model.films.Film
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -31,6 +29,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemContentType
+import androidx.paging.compose.itemKey
+import com.example.withfilms.domain.model.Film
 import com.example.withfilms.presentation.ui.theme.RatingGreen
 import com.example.withfilms.presentation.utils.CustomBottomAppBar
 import com.example.withfilms.presentation.utils.CustomTextField
@@ -44,7 +47,7 @@ fun FilmsScreen(
 ) {
 
     val state = viewModel.filmUiState.collectAsStateWithLifecycle()
-    val films = state.value.filmList
+    val films = state.value.collectAsLazyPagingItems()
 
     Scaffold(
         bottomBar = { CustomBottomAppBar() }
@@ -69,7 +72,7 @@ fun FilmsScreen(
 
 @Composable
 fun FilmsList(
-    films: List<Film>,
+    films: LazyPagingItems<Film>,
     onFilmClick: (id: Long) -> Unit,
 ) {
 
@@ -77,13 +80,21 @@ fun FilmsList(
         columns = GridCells.Fixed(2),
         modifier = Modifier.fillMaxSize(),
     ) {
-        items(items = films, key = {it.filmId}) {
-            FilmItem(
-                film = it,
-                onFilmClick = onFilmClick,
-                Modifier
-                    .padding(10.dp),
-            )
+        items(
+            count = films.itemCount,
+            key = films.itemKey(),
+            contentType = films.itemContentType { "contentType" }
+        ) { index ->
+            val film = films[index]
+            film?.let {
+                FilmItem(
+                    film = it,
+                    onFilmClick = onFilmClick,
+                    Modifier
+                        .padding(10.dp),
+                )
+            }
+
         }
     }
 }
