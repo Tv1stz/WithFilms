@@ -1,11 +1,11 @@
 package com.example.withfilms.data.remote.model.filmdetail
 
-import com.example.withfilms.data.remote.model.Country
+import com.example.withfilms.data.remote.model.NetworkCountry
 import com.example.withfilms.data.remote.model.GenreNetwork
 
 data class FilmDetailDto(
     val completed: Boolean,
-    val countries: List<Country>,
+    val countries: List<NetworkCountry>,
     val coverUrl: Any,
     val description: String,
     val editorAnnotation: Any,

@@ -6,13 +6,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.example.withfilms.data.Repository
-import com.example.withfilms.data.remote.model.films.Film
+import com.example.withfilms.domain.model.Film
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,8 +24,20 @@ class FilmsViewModel @Inject constructor(
     private val repository: Repository
 ) : ViewModel() {
 
-    private val _filmsUiState = MutableStateFlow(FilmsUiState())
-    val filmUiState: StateFlow<FilmsUiState> = _filmsUiState.asStateFlow()
+    private val _filmsUiState = MutableStateFlow(emptyFlow<PagingData<Film>>())
+    val filmUiState: StateFlow<Flow<PagingData<Film>>> = _filmsUiState.asStateFlow()
+
+    init {
+        getTopFilms()
+    }
+
+    private fun getTopFilms() {
+        val films = repository.getTopFilms().cachedIn(viewModelScope)
+        viewModelScope.launch {
+            _filmsUiState.value = films
+        }
+
+    }
 
     var search by mutableStateOf("")
         private set
@@ -30,26 +45,6 @@ class FilmsViewModel @Inject constructor(
     fun searchFilms(request: String) {
         search = request
     }
-    private fun addFilms() {
-        viewModelScope.launch {
-            val films = repository.getTopFilms()
-
-            _filmsUiState.update { state ->
-                state.copy(
-                    filmList = films.films
-                )
-            }
-        }
-    }
-
-    init {
-        addFilms()
-    }
-
 
 
 }
-
-data class FilmsUiState(
-    val filmList: List<Film> = emptyList()
-)

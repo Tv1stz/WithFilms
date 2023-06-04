@@ -3,8 +3,6 @@ package com.example.withfilms.presentation.filmdetail
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.withfilms.data.Repository
-import com.example.withfilms.data.toFilmDetail
-import com.example.withfilms.data.toFilmStaff
 import com.example.withfilms.domain.model.FilmDetail
 import com.example.withfilms.domain.model.Staff
 import com.example.withfilms.domain.model.Genre
@@ -46,11 +44,9 @@ class FilmDetailViewModel @Inject constructor(
     ) {
         if (filmId != this.filmId) {
             viewModelScope.launch {
-                val film = repository.getFilmDetailById(filmId).toFilmDetail()
+                val film = repository.getFilmDetailById(filmId)
 
-                val filmStaff = repository.getFilmStaffById(filmId).map {
-                    it.toFilmStaff()
-                }
+                val filmStaff = repository.getFilmStaffByFilmId(filmId)
 
                 successFilmDetail(film, filmStaff)
             }
