@@ -22,10 +22,10 @@ class Repository @Inject constructor(
         }
     }
 
-    suspend fun getFilmDetailById(id: Long) =
+    suspend fun getFilmDetailById(id: Int) =
         filmService.getFilmDetailById(id = id).toFilmDetail()
 
-    suspend fun getFilmStaffByFilmId(filmId: Long) =
+    suspend fun getFilmStaffByFilmId(filmId: Int) =
         filmService.getFilmStaffById(filmId = filmId).map {
             it.toStaff()
         }

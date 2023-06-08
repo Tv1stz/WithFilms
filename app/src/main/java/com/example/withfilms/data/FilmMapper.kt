@@ -12,7 +12,7 @@ import com.example.withfilms.domain.model.Staff
 import com.example.withfilms.domain.model.Genre
 
 fun FilmDetailDto.toFilmDetail() = FilmDetail(
-    filmId = kinopoiskId.toLong(),
+    filmId = kinopoiskId,
     filmName = nameRu,
     rating = ratingKinopoisk.toString(),
     genres = genres.toGenre(),

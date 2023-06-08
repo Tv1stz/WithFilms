@@ -8,44 +8,29 @@ import com.example.withfilms.domain.model.Staff
 import com.example.withfilms.domain.model.Genre
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class FilmDetailViewModel @Inject constructor(
+class SharedFilmDetailViewModel @Inject constructor(
     private val repository: Repository
 ) : ViewModel() {
 
-    private var filmId: Long? = null
-    var localStaff: MutableMap<String, MutableList<Staff>> = mutableMapOf(
-        "Режиссер" to mutableListOf(),
-        "Актер" to mutableListOf(),
-        "Продюсер" to mutableListOf(),
-        "Сцинарист" to mutableListOf(),
-        "Оператор" to mutableListOf(),
-        "Композитор" to mutableListOf(),
-        "Художник" to mutableListOf(),
-        "Монтажер" to mutableListOf()
-    )
-        private set
+    private var filmId: Int? = null
 
     private val _filmDetailUiState = MutableStateFlow(
-        FilmDetailUiState(
-            isLoading = true
-        )
+        FilmDetailUiState(isLoading = true)
     )
-    val filmUiState: StateFlow<FilmDetailUiState> = _filmDetailUiState.asStateFlow()
+    val filmUiState = _filmDetailUiState.asStateFlow()
 
     fun onStart(
-        filmId: Long
+        filmId: Int
     ) {
         if (filmId != this.filmId) {
             viewModelScope.launch {
                 val film = repository.getFilmDetailById(filmId)
-
                 val filmStaff = repository.getFilmStaffByFilmId(filmId)
 
                 successFilmDetail(film, filmStaff)
@@ -54,25 +39,7 @@ class FilmDetailViewModel @Inject constructor(
         }
     }
 
-    fun sortedStaff() {
-        val staff = _filmDetailUiState.value.staff
-        for (person in staff) {
-            if (person.nameRu.isNotBlank()) {
-                when (person.professionKey) {
-                    "DIRECTOR" -> { localStaff["Режиссер"]?.add(person) }
-                    "ACTOR" -> { localStaff["Актер"]?.add(person) }
-                    "PRODUCER" -> { localStaff["Продюсер"]?.add(person) }
-                    "WRITER" -> { localStaff["Сцинарист"]?.add(person) }
-                    "COMPOSER" -> { localStaff["Композитор"]?.add(person) }
-                    "DESIGN" -> { localStaff["Художник"]?.add(person) }
-                    "EDITOR" -> { localStaff["Монтажер"]?.add(person) }
-                    "OPERATOR" -> { localStaff["Оператор"]?.add(person) }
-                }
-            }
-        }
-    }
-
-    private fun successFilmDetail(movie: FilmDetail, staff: List<Staff>) {
+   private fun successFilmDetail(movie: FilmDetail, staff: List<Staff>) {
 
         _filmDetailUiState.update { state ->
             state.copy(
@@ -94,7 +61,7 @@ class FilmDetailViewModel @Inject constructor(
 }
 
 data class FilmDetailUiState(
-    val filmId: Long = 0,
+    val filmId: Int = 0,
     val filmName: String = "",
     val rating: String = "",
     val genres: List<Genre> = emptyList(),

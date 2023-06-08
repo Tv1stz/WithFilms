@@ -1,7 +1,7 @@
 package com.example.withfilms.domain.model
 
 data class FilmDetail(
-    val filmId: Long = 0,
+    val filmId: Int = 0,
     val filmName: String = "",
     val rating: String = "",
     val genres: List<Genre> = emptyList(),

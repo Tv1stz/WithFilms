@@ -1,4 +1,4 @@
-package com.example.withfilms.presentation.filmdetail
+package com.example.withfilms.presentation.filmdetail.filmstaffscreen
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
@@ -10,12 +10,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,34 +31,40 @@ import com.example.withfilms.presentation.utils.CustomTopAppBar
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun FilmStaffScreen(
+    staff: List<Staff>,
+    filmName: String,
     onBackClick: () -> Unit,
-    viewModel: FilmDetailViewModel = hiltViewModel()
+    viewModel: FilmStaffViewModel = hiltViewModel()
 ) {
 
     LaunchedEffect(true) {
-        viewModel.sortedStaff()
+        viewModel.sortedStaff(staff)
     }
 
-    val localStaff = viewModel.localStaff
-    val filmName = viewModel.filmUiState.collectAsStateWithLifecycle()
+    val staffState by viewModel.staffUiState.collectAsStateWithLifecycle()
+    val localStaff = staffState.staff
 
     Scaffold(
         topBar = {
             CustomTopAppBar(
-                title = filmName.value.filmName,
+                title = filmName,
                 onBackClick = { onBackClick() }
             )
         }
     ) { contentPadding ->
         Box(modifier = Modifier.padding(contentPadding)) {
-            LazyColumn {
-                localStaff.forEach { (key, value) ->
-                    stickyHeader {
-                        SubItems(subItems = key)
-                    }
+            if (staffState.isLoading) {
+                CircularProgressIndicator()
+            } else {
+                LazyColumn {
+                    localStaff.forEach { (key, value) ->
+                        stickyHeader {
+                            SubItems(subItems = key)
+                        }
 
-                    items(value) {actor ->
-                        ActorItem(actor = actor)
+                        items(value) {actor ->
+                            ActorItem(actor = actor)
+                        }
                     }
                 }
             }

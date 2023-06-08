@@ -1,4 +1,4 @@
-package com.example.withfilms.presentation.filmdetail
+package com.example.withfilms.presentation.filmdetail.descriptionscreen
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding

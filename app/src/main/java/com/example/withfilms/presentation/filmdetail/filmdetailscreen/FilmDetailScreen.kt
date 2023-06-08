@@ -1,4 +1,4 @@
-package com.example.withfilms.presentation.filmdetail
+package com.example.withfilms.presentation.filmdetail.filmdetailscreen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -22,8 +22,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,29 +33,21 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.example.withfilms.R
 import com.example.withfilms.domain.model.Staff
 import com.example.withfilms.domain.model.Genre
+import com.example.withfilms.presentation.filmdetail.FilmDetailUiState
 import com.example.withfilms.presentation.ui.theme.WithFilmsTheme
 import com.example.withfilms.presentation.utils.ShowMoreButton
 
 @Composable
 fun FilmDetailScreen(
-    id: Long,
+    filmDetail: FilmDetailUiState,
     onBackClick: () -> Unit,
-    viewModel: FilmDetailViewModel = hiltViewModel(),
-    onDescriptionClick: (description: String) -> Unit,
+    onDescriptionClick: () -> Unit,
     onShowMoreStaffClick: () -> Unit
 ) {
-    LaunchedEffect(true) {
-        viewModel.onStart(id)
-    }
-
-    val filmDetail by viewModel.filmUiState.collectAsStateWithLifecycle()
-
     if (filmDetail.isLoading) {
         Box(
             modifier = Modifier.fillMaxSize(),
@@ -97,7 +87,7 @@ fun FilmDetailItem(
     genres: List<Genre>,
     onBackClick: () -> Unit = {},
     actors: List<Staff>,
-    onDescriptionClick: (description: String) -> Unit,
+    onDescriptionClick: () -> Unit,
     onShowMoreStaffClick: () -> Unit
 ) {
     Column {
@@ -226,7 +216,7 @@ fun GenreItem(
 @Composable
 fun FilmDescription(
     filmDescription: String,
-    onDescriptionClick: (description: String) -> Unit,
+    onDescriptionClick: () -> Unit,
 ) {
     Column {
         Text(
@@ -235,7 +225,7 @@ fun FilmDescription(
             modifier = Modifier.padding(top = 14.dp, start = 16.dp)
         )
         Box(
-            modifier = Modifier.clickable { onDescriptionClick(filmDescription) }
+            modifier = Modifier.clickable { onDescriptionClick() }
         ) {
             Column(
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 9.dp)

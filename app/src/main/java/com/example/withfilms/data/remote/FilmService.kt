@@ -30,13 +30,13 @@ interface FilmService {
     @GET("v2.2/films/{id}")
     suspend fun getFilmDetailById(
         @Header("X-API-KEY") key: String = API_KEY,
-        @Path("id") id: Long
+        @Path("id") id: Int
     ): FilmDetailDto
 
     @GET("v1/staff/")
     suspend fun getFilmStaffById(
         @Header("X-API-KEY") key: String = API_KEY,
-        @Query("filmId") filmId: Long
+        @Query("filmId") filmId: Int
     ): List<FilmStaffDto>
 
     companion object {

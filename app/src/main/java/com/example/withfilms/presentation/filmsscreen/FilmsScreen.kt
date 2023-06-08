@@ -21,7 +21,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -43,7 +42,7 @@ import com.example.withfilms.presentation.utils.CustomTextField
 @Composable
 fun FilmsScreen(
     viewModel: FilmsViewModel = hiltViewModel(),
-    onFilmClick: (id: Long) -> Unit,
+    onFilmClick: (filmId: Int) -> Unit,
 ) {
 
     val state = viewModel.filmUiState.collectAsStateWithLifecycle()
@@ -73,7 +72,7 @@ fun FilmsScreen(
 @Composable
 fun FilmsList(
     films: LazyPagingItems<Film>,
-    onFilmClick: (id: Long) -> Unit,
+    onFilmClick: (filmId: Int) -> Unit,
 ) {
 
     LazyVerticalGrid(
@@ -100,19 +99,9 @@ fun FilmsList(
 }
 
 @Composable
-fun LoadingFilms() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        CircularProgressIndicator()
-    }
-}
-
-@Composable
 fun FilmItem(
     film: Film,
-    onFilmClick: (id: Long) -> Unit,
+    onFilmClick: (filmId: Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -129,7 +118,7 @@ fun FilmItem(
                     modifier = Modifier
                         .width(150.dp)
                         .align(Alignment.TopEnd)
-                        .clickable { onFilmClick(film.filmId.toLong()) },
+                        .clickable { onFilmClick(film.filmId) },
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     AsyncImage(
