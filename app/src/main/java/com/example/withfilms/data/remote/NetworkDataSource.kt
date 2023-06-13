@@ -22,4 +22,7 @@ class NetworkDataSource @Inject constructor(
 
     suspend fun getSearchFilmByKeyWord(searchQuery: String) =
         filmService.getSearchFilmByKeyWord(keyWord = searchQuery)
+
+    suspend fun getActorDetailById(actorId: Int) =
+        filmService.getActorDetailById(actorId = actorId)
 }

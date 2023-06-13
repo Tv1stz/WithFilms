@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -90,6 +91,25 @@ fun ShowMoreButton(
                 style = MaterialTheme.typography.labelMedium
             )
         }
+    }
+}
+
+@Composable
+fun RatingItem(
+    rating: String
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.baseline_star_24),
+            contentDescription = null
+        )
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(
+            text = rating,
+            color = Color(0xFFE2963B)
+        )
     }
 }
 

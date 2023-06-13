@@ -41,6 +41,7 @@ import com.example.withfilms.domain.model.Staff
 import com.example.withfilms.domain.model.Genre
 import com.example.withfilms.presentation.filmdetail.FilmDetailUiState
 import com.example.withfilms.presentation.ui.theme.WithFilmsTheme
+import com.example.withfilms.presentation.utils.RatingItem
 import com.example.withfilms.presentation.utils.ShowMoreButton
 
 @Composable
@@ -48,7 +49,8 @@ fun FilmDetailScreen(
     filmDetail: FilmDetailUiState,
     onBackClick: () -> Unit,
     onDescriptionClick: () -> Unit,
-    onShowMoreStaffClick: () -> Unit
+    onShowMoreStaffClick: () -> Unit,
+    onActorDetail: (actorId: Int) -> Unit
 ) {
     if (filmDetail.isLoading) {
         Box(
@@ -71,7 +73,8 @@ fun FilmDetailScreen(
             onBackClick = onBackClick,
             actors = filmDetail.staff,
             onDescriptionClick = onDescriptionClick,
-            onShowMoreStaffClick = onShowMoreStaffClick
+            onShowMoreStaffClick = onShowMoreStaffClick,
+            onActorDetail = onActorDetail
         )
     }
 
@@ -90,7 +93,8 @@ fun FilmDetailItem(
     onBackClick: () -> Unit = {},
     actors: List<Staff>,
     onDescriptionClick: () -> Unit,
-    onShowMoreStaffClick: () -> Unit
+    onShowMoreStaffClick: () -> Unit,
+    onActorDetail: (actorId: Int) -> Unit
 ) {
     Column(
         modifier = Modifier.verticalScroll(rememberScrollState())
@@ -140,7 +144,8 @@ fun FilmDetailItem(
         )
         ActorsList(
             actors = actors,
-            onShowMoreStaffClick = onShowMoreStaffClick
+            onShowMoreStaffClick = onShowMoreStaffClick,
+            onActorDetail = onActorDetail
         )
     }
 
@@ -255,8 +260,8 @@ fun FilmDescription(
 @Composable
 fun ActorsList(
     actors: List<Staff>,
-    onShowMoreStaffClick: () -> Unit
-
+    onShowMoreStaffClick: () -> Unit,
+    onActorDetail: (actorId: Int) -> Unit
 ) {
     Column {
         Text(
@@ -264,16 +269,24 @@ fun ActorsList(
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.padding(start = 16.dp, top = 15.dp, bottom = 8.dp)
         )
+
+        val actorsSubList = if (actors.size > 14) {
+            actors
+                .subList(0, 15)
+                .filter { it.professionKey == "ACTOR" }
+        } else {
+            actors
+        }
+
         LazyRow {
             items(
-                items = actors
-                    .subList(0, 15)
-                    .filter { it.professionKey == "ACTOR" },
-                key = { it.staffId }
+                items = actorsSubList,
             ) {
                 ActorsItem(
                     actorPoster = it.posterUrl,
-                    actorName = it.nameRu
+                    actorName = it.nameRu,
+                    actorId = it.staffId,
+                    onActorDetail = onActorDetail
                 )
             }
             item {
@@ -286,18 +299,20 @@ fun ActorsList(
     }
 }
 
+
 @Composable
 fun ActorsItem(
+    actorId: Int,
     actorPoster: String,
     actorName: String,
-    onActorDetail: (actorId: Long) -> Unit = {}
+    onActorDetail: (actorId: Int) -> Unit
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .padding(horizontal = 5.dp)
             .width(86.dp)
-            .clickable { onActorDetail(2) }
+            .clickable { onActorDetail(actorId) }
     ) {
         AsyncImage(
             modifier = Modifier
@@ -311,25 +326,6 @@ fun ActorsItem(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             style = MaterialTheme.typography.titleSmall
-        )
-    }
-}
-
-@Composable
-fun RatingItem(
-    rating: String
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.baseline_star_24),
-            contentDescription = null
-        )
-        Spacer(modifier = Modifier.width(4.dp))
-        Text(
-            text = rating,
-            color = Color(0xFFE2963B)
         )
     }
 }

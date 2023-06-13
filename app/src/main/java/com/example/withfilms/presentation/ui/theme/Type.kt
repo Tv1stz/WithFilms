@@ -23,25 +23,10 @@ val Lato = FontFamily(
 
 // Set of Material typography styles to start with
 val Typography = Typography(
-    bodyLarge = TextStyle(
-        fontFamily = FontFamily.Default,
+    headlineSmall = TextStyle(
+        fontFamily = JotiOne,
+        fontSize = 28.sp,
         fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 0.5.sp
-    ),
-    //текст карточек
-    titleSmall = TextStyle(
-        fontFamily = Lato,
-        fontSize = 14.sp,
-        fontWeight = FontWeight.Normal
-    ),
-
-    //название фильма в деталях
-    titleMedium = TextStyle(
-        fontFamily = Lato,
-        fontSize = 16.sp,
-        fontWeight = FontWeight.Bold
     ),
 
     titleLarge = TextStyle(
@@ -50,12 +35,35 @@ val Typography = Typography(
         fontWeight = FontWeight.Bold
     ),
 
-    //для clips
-    labelMedium = TextStyle(
+    //название фильма в деталях
+    titleMedium = TextStyle(
         fontFamily = Lato,
-        fontSize = 12.sp,
+        fontSize = 18.sp,
+        fontWeight = FontWeight.Bold
+    ),
+
+    //текст карточек
+    titleSmall = TextStyle(
+        fontFamily = Lato,
+        fontSize = 14.sp,
         fontWeight = FontWeight.Normal
     ),
+
+    bodyLarge = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Normal,
+        fontSize = 16.sp,
+        lineHeight = 24.sp,
+        letterSpacing = 0.5.sp
+    ),
+
+    //Читать далее
+    bodyMedium = TextStyle(
+        fontFamily = Lato,
+        fontSize = 14.sp,
+        fontStyle = FontStyle.Italic
+    ),
+
     //Описание фильма
     bodySmall = TextStyle(
         fontFamily = Lato,
@@ -63,15 +71,11 @@ val Typography = Typography(
         fontWeight = FontWeight.Normal,
         fontStyle = FontStyle.Italic
     ),
-    //Читать далее
-    bodyMedium = TextStyle(
+
+    //для clips
+    labelMedium = TextStyle(
         fontFamily = Lato,
-        fontSize = 14.sp,
-        fontStyle = FontStyle.Italic
+        fontSize = 12.sp,
+        fontWeight = FontWeight.Normal
     ),
-    headlineSmall = TextStyle(
-        fontFamily = JotiOne,
-        fontSize = 28.sp,
-        fontWeight = FontWeight.Normal,
-    )
 )

@@ -36,7 +36,7 @@ fun SearchScreen(
                 onChangeQuery = {
                     viewModel.onNewQuery(it)
                 },
-                hint = "search"
+                hint = "фильмы, сериалы и т.д."
             )
             if (state.isLoading) {
                 Box(
@@ -48,7 +48,9 @@ fun SearchScreen(
                     items(items = state.films, key = {it.filmId}) { film ->
                         FilmItem(
                             film = film,
-                            onFilmClick = onFilmClick
+                            onFilmClick = onFilmClick,
+                            Modifier
+                                .padding(10.dp),
                         )
                     }
                 }

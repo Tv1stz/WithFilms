@@ -30,5 +30,8 @@ class Repository @Inject constructor(
             it.toStaff()
         }
 
+    suspend fun getActorDetailById(actorId: Int) =
+        networkDataSource.getActorDetailById(actorId).toActorDetail()
+
 
 }

@@ -1,6 +1,7 @@
 package com.example.withfilms.presentation.filmdetail.filmstaffscreen
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,6 +35,7 @@ fun FilmStaffScreen(
     staff: List<Staff>,
     filmName: String,
     onBackClick: () -> Unit,
+    onActorClick: (actorId: Int) -> Unit,
     viewModel: FilmStaffViewModel = hiltViewModel()
 ) {
 
@@ -63,7 +65,10 @@ fun FilmStaffScreen(
                         }
 
                         items(persons) {person ->
-                            ActorItem(person = person)
+                            ActorItem(
+                                person = person,
+                                onActorClick = onActorClick
+                            )
                         }
                     }
                 }
@@ -86,12 +91,14 @@ fun SubItems(
 
 @Composable
 fun ActorItem(
+    onActorClick: (actorId: Int) -> Unit,
     person: Staff
 ) {
     Row(
         modifier = Modifier
             .height(100.dp)
             .padding(4.dp)
+            .clickable { onActorClick(person.staffId) }
     ) {
         AsyncImage(
             model = person.posterUrl,
@@ -134,6 +141,7 @@ fun ActorItemPreview() {
             professionKey = "ACTOR",
             professionText = "Актеры",
             staffId = 212
-        )
+        ),
+        onActorClick = {}
     )
 }

@@ -7,8 +7,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
+import com.example.withfilms.presentation.actordetail.ActorDetailScreen
 import com.example.withfilms.presentation.filmsscreen.FilmsScreen
 import com.example.withfilms.presentation.navigation.filmdetailgraph.detailGraph
 import com.example.withfilms.presentation.navigation.filmdetailgraph.navigateToDetail
@@ -37,7 +40,28 @@ fun FilmNavGraph(
         }
 
         detailGraph(navController)
+
+        composable(
+            route = "actorDetail/{actorId}",
+            arguments = listOf(
+                navArgument("actorId") { type = NavType.IntType }
+            )
+        ) { backStackEntry ->
+            val actorId = backStackEntry.arguments?.getInt("actorId") ?: 0
+
+            ActorDetailScreen(
+                onFilmClick = {
+                    navController.navigateToDetail(it)
+                },
+                onBackClick = navController::popBackStack,
+                actorId = actorId
+            )
+        }
     }
+}
+
+fun NavHostController.navigateToActorDetail(actorId: Int) {
+    navigate("actorDetail/$actorId")
 }
 
 

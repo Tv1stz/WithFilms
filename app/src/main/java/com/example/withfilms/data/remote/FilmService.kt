@@ -1,6 +1,7 @@
 package com.example.withfilms.data.remote
 
 
+import com.example.withfilms.data.remote.model.actordetail.ActorDetailDto
 import com.example.withfilms.data.remote.model.filmdetail.FilmDetailDto
 import com.example.withfilms.data.remote.model.films.FilmDto
 import com.example.withfilms.data.remote.model.filmstaff.FilmStaffDto
@@ -46,6 +47,12 @@ interface FilmService {
         @Query("keyword") keyWord: String,
         @Query("page") page: Int = 1,
     ): SearchFilmsDto
+
+    @GET("v1/staff/{id}")
+    suspend fun getActorDetailById(
+        @Header("X-API-KEY") key: String = API_KEY,
+        @Path("id") actorId: Int
+    ): ActorDetailDto
 
     companion object {
 

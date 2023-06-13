@@ -39,7 +39,7 @@ fun CustomBottomAppBar(
         modifier = modifier
             .fillMaxWidth()
             .height(50.dp)
-            .background(Color.DarkGray),
+            .background(MaterialTheme.colorScheme.surfaceVariant),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceAround,
 
@@ -61,7 +61,7 @@ fun ButtonForBottomAppBar(
     isSelected: Boolean,
     onItemClick: (BottomNavItem) -> Unit
 ) {
-    val contentColor = if (isSelected) Color.White else Color.Black
+    val contentColor = if (isSelected) Color.White else Color.Gray
     Column(
         modifier = Modifier
             .padding(5.dp)

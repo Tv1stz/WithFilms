@@ -8,6 +8,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.example.withfilms.presentation.filmdetail.SharedFilmDetailViewModel
 import com.example.withfilms.presentation.filmdetail.filmdetailscreen.FilmDetailScreen
+import com.example.withfilms.presentation.navigation.navigateToActorDetail
 import com.example.withfilms.presentation.navigation.sharedViewModel
 
 
@@ -37,6 +38,9 @@ fun NavGraphBuilder.filmDetailScreen(
             },
             onShowMoreStaffClick = {
                 navController.navigateToFilmStaff()
+            },
+            onActorDetail = { actorId ->
+                navController.navigateToActorDetail(actorId = actorId)
             }
         )
     }
