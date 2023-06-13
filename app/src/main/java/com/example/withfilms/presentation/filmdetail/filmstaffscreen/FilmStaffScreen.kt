@@ -57,13 +57,13 @@ fun FilmStaffScreen(
                 CircularProgressIndicator()
             } else {
                 LazyColumn {
-                    localStaff.forEach { (key, value) ->
+                    localStaff.forEach { (profession, persons) ->
                         stickyHeader {
-                            SubItems(subItems = key)
+                            SubItems(subItems = profession)
                         }
 
-                        items(value) {actor ->
-                            ActorItem(actor = actor)
+                        items(persons) {person ->
+                            ActorItem(person = person)
                         }
                     }
                 }
@@ -86,7 +86,7 @@ fun SubItems(
 
 @Composable
 fun ActorItem(
-    actor: Staff
+    person: Staff
 ) {
     Row(
         modifier = Modifier
@@ -94,8 +94,8 @@ fun ActorItem(
             .padding(4.dp)
     ) {
         AsyncImage(
-            model = actor.posterUrl,
-            contentDescription = actor.nameRu,
+            model = person.posterUrl,
+            contentDescription = person.nameRu,
             modifier = Modifier.width(64.dp)
         )
         Column(
@@ -104,16 +104,16 @@ fun ActorItem(
                 .padding(start = 8.dp)
         ) {
             Text(
-                text = actor.nameRu,
+                text = person.nameRu,
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.padding(vertical = 4.dp)
             )
             Text(
-                text = actor.nameEn,
+                text = person.nameEn,
                 style = MaterialTheme.typography.bodySmall
             )
             Text(
-                text = actor.description ?: "",
+                text = person.description ?: "",
                 style = MaterialTheme.typography.bodySmall,
                 color = Color.Gray,
                 modifier = Modifier.padding(top = 24.dp)
@@ -126,7 +126,7 @@ fun ActorItem(
 @Composable
 fun ActorItemPreview() {
     ActorItem(
-        actor = Staff(
+        person = Staff(
             description = "Clara Mayfield",
             nameEn = "Whoopi Goldberg",
             nameRu = "Вупи Голдберг",

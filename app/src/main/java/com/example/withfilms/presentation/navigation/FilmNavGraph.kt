@@ -12,6 +12,7 @@ import androidx.navigation.compose.composable
 import com.example.withfilms.presentation.filmsscreen.FilmsScreen
 import com.example.withfilms.presentation.navigation.filmdetailgraph.detailGraph
 import com.example.withfilms.presentation.navigation.filmdetailgraph.navigateToDetail
+import com.example.withfilms.presentation.searchscreen.SearchScreen
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -24,13 +25,14 @@ fun FilmNavGraph(
         navController = navController,
         startDestination = startDestination
     ) {
-        composable(
-            "films"
-        ) {
+        composable("films") {
             FilmsScreen(
-                onFilmClick = {
-                    navController.navigateToDetail(it)
-                }
+                onFilmClick = { navController.navigateToDetail(it) }
+            )
+        }
+        composable("search") {
+            SearchScreen(
+                onFilmClick = { navController.navigateToDetail(it) }
             )
         }
 
