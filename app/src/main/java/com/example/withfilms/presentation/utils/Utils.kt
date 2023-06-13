@@ -1,72 +1,71 @@
 package com.example.withfilms.presentation.utils
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.withfilms.R
 
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CustomTextField(
-    userRequest: String,
-    onUserRequestChanged: (String) -> Unit
+fun CustomSearch(
+    hint: String,
+    query: String,
+    onChangeQuery: (String) -> Unit,
+    hintTextStyle: TextStyle = TextStyle(
+        color = Color.Gray,
+        fontSize = 14.sp,
+    ),
+    inputTextStyle: TextStyle = TextStyle(
+        color = Color.White,
+        fontSize = 16.sp,
+    ),
 ) {
-    TextField(
-        modifier = Modifier
-            .height(55.dp)
-            .padding(horizontal = 11.dp)
-            .fillMaxWidth()
-            .clip(
-                RoundedCornerShape(16.dp)
-            ),
-        value = userRequest,
-        onValueChange = onUserRequestChanged,
-        keyboardOptions = KeyboardOptions.Default.copy(
-            imeAction = ImeAction.Done
-        ),
+    BasicTextField(
+        value = query,
+        onValueChange = onChangeQuery,
+        textStyle = inputTextStyle,
         singleLine = true,
-        colors = TextFieldDefaults.textFieldColors(
-            focusedIndicatorColor = MaterialTheme.colorScheme.surfaceVariant,
-            unfocusedIndicatorColor = MaterialTheme.colorScheme.surfaceVariant
-        ),
-        supportingText = { Text(
-            text = "Search",
-            color = Color(0xFF868686),
-            fontSize = 12.sp
-        ) },
-        trailingIcon = {
-            Image(
-                painter = painterResource(id = R.drawable.request),
-                contentDescription = null
-            )
-        },
-
-    )
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp)
+            .height(55.dp)
+            .clip(RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.surfaceVariant),
+    ) { innerTextField ->
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(horizontal = 16.dp),
+        ) {
+            Box {
+                if (query.isEmpty()) {
+                    androidx.compose.material.Text(text = hint, style = hintTextStyle)
+                }
+                innerTextField()
+            }
+        }
+    }
 }
 
 @Composable

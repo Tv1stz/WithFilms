@@ -4,6 +4,7 @@ package com.example.withfilms.data.remote
 import com.example.withfilms.data.remote.model.filmdetail.FilmDetailDto
 import com.example.withfilms.data.remote.model.films.FilmDto
 import com.example.withfilms.data.remote.model.filmstaff.FilmStaffDto
+import com.example.withfilms.data.remote.model.searchfilms.SearchFilmsDto
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -30,7 +31,7 @@ interface FilmService {
     @GET("v2.2/films/{id}")
     suspend fun getFilmDetailById(
         @Header("X-API-KEY") key: String = API_KEY,
-        @Path("id") id: Int
+        @Path("id") filmId: Int
     ): FilmDetailDto
 
     @GET("v1/staff/")
@@ -38,6 +39,13 @@ interface FilmService {
         @Header("X-API-KEY") key: String = API_KEY,
         @Query("filmId") filmId: Int
     ): List<FilmStaffDto>
+
+    @GET("v2.1/films/search-by-keyword/")
+    suspend fun getSearchFilmByKeyWord(
+        @Header("X-API-KEY") key: String = API_KEY,
+        @Query("keyword") keyWord: String,
+        @Query("page") page: Int = 1,
+    ): SearchFilmsDto
 
     companion object {
 

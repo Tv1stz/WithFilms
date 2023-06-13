@@ -1,32 +1,34 @@
 package com.example.withfilms.data
 
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
 import androidx.paging.map
-import com.example.withfilms.data.remote.FilmPagingSource
-import com.example.withfilms.data.remote.FilmService
+import com.example.withfilms.data.remote.NetworkDataSource
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class Repository @Inject constructor(
-    private val filmService: FilmService
+    private val networkDataSource: NetworkDataSource
 ) {
-    fun getTopFilms() = Pager(
-        config = PagingConfig(20),
-        pagingSourceFactory = {
-            FilmPagingSource(filmService)
+    fun getTopFilms() =
+        networkDataSource.getTopFilms().map {
+            it.map { film ->
+                film.toFilm()
+            }
         }
-    ).flow.map {
-        it.map { film ->
-            film.toFilm()
-        }
-    }
 
-    suspend fun getFilmDetailById(id: Int) =
-        filmService.getFilmDetailById(id = id).toFilmDetail()
+    suspend fun getSearchFilmByKeyWord(searchQuery: String) =
+        networkDataSource.getSearchFilmByKeyWord(searchQuery).films.map {
+            it.toFilm()
+        }
+
+
+    suspend fun getFilmDetailById(filmId: Int) =
+        networkDataSource.getFilmDetailById(filmId).toFilmDetail()
+
 
     suspend fun getFilmStaffByFilmId(filmId: Int) =
-        filmService.getFilmStaffById(filmId = filmId).map {
+        networkDataSource.getFilmStaffByFilmId(filmId).map {
             it.toStaff()
         }
+
+
 }
