@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -29,43 +28,42 @@ fun FilmItem(
     modifier: Modifier = Modifier
 ) {
     Box(
-        modifier = modifier,
+        modifier = modifier
+            .width(155.dp)
+            .height(250.dp),
         contentAlignment = Alignment.Center,
     ) {
-        Surface(
-            modifier = Modifier
-                .width(155.dp)
-                .height(250.dp),
-        ) {
-            Box(modifier = Modifier.width(155.dp)) {
-                Column(
+        Box(modifier = Modifier.width(155.dp)) {
+            Column(
+                modifier = Modifier
+                    .width(150.dp)
+                    .align(Alignment.TopEnd)
+                    .clickable { onFilmClick(film.filmId) },
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                AsyncImage(
                     modifier = Modifier
-                        .width(150.dp)
-                        .align(Alignment.TopEnd)
-                        .clickable { onFilmClick(film.filmId) },
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    AsyncImage(
-                        modifier = Modifier.clip(RoundedCornerShape(16.dp)),
-                        model = film.posterUrl,
-                        contentDescription = film.nameRu
-                    )
-                    Text(
-                        text = film.nameRu ?: "нет имени",
-                        style = MaterialTheme.typography.titleSmall,
-                        modifier = Modifier.padding(top = 5.dp),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-                RatingView(
-                    rating = film.rating,
-                    Modifier.padding(top = 5.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .height(210.dp),
+                    model = film.posterUrl,
+                    contentDescription = film.nameRu
+                )
+                Text(
+                    text = film.nameRu ?: "нет имени",
+                    style = MaterialTheme.typography.titleSmall,
+                    modifier = Modifier.padding(top = 5.dp),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
+            RatingView(
+                rating = film.rating,
+                Modifier.padding(top = 5.dp)
+            )
         }
     }
 }
+
 
 @Composable
 fun RatingView(

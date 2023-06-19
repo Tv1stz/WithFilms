@@ -59,7 +59,7 @@ interface FilmService {
         fun create(): FilmService {
 
             val interceptor = HttpLoggingInterceptor().apply {
-                HttpLoggingInterceptor.Level.BODY
+                level = HttpLoggingInterceptor.Level.BODY
             }
 
             val client = OkHttpClient.Builder()
