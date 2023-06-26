@@ -17,12 +17,12 @@ class NetworkDataSource @Inject constructor(
     suspend fun getFilmDetailById(filmId: Int) =
         filmService.getFilmDetailById(filmId = filmId)
 
-    suspend fun getFilmStaffByFilmId(filmId: Int) =
+    suspend fun getFilmStaffById(filmId: Int) =
         filmService.getFilmStaffById(filmId = filmId)
 
     suspend fun getSearchFilmByKeyWord(searchQuery: String) =
         filmService.getSearchFilmByKeyWord(keyWord = searchQuery)
 
-    suspend fun getActorDetailById(actorId: Int) =
-        filmService.getActorDetailById(actorId = actorId)
+    suspend fun getPersonDetailById(personId: Int) =
+        filmService.getPersonDetailById(actorId = personId)
 }

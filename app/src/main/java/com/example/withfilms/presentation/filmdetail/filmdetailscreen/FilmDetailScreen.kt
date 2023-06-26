@@ -18,7 +18,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -30,6 +29,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,7 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.withfilms.R
-import com.example.withfilms.domain.model.Staff
+import com.example.withfilms.domain.model.FilmStaff
 import com.example.withfilms.domain.model.Genre
 import com.example.withfilms.presentation.filmdetail.FilmDetailUiState
 import com.example.withfilms.presentation.ui.theme.WithFilmsTheme
@@ -46,39 +46,29 @@ import com.example.withfilms.presentation.utils.ShowMoreButton
 
 @Composable
 fun FilmDetailScreen(
-    filmDetail: FilmDetailUiState,
+    detail: FilmDetailUiState,
     onBackClick: () -> Unit,
     onDescriptionClick: () -> Unit,
     onShowMoreStaffClick: () -> Unit,
-    onActorDetail: (actorId: Int) -> Unit
+    onActorDetail: (actorId: Int) -> Unit,
 ) {
-    if (filmDetail.isLoading) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            CircularProgressIndicator()
-        }
-
-    } else {
-        FilmDetailItem(
-            filmDescription = filmDetail.description,
-            filmName = filmDetail.filmName,
-            rating = filmDetail.rating,
-            year = filmDetail.year,
-            filmLength = filmDetail.filmLength,
-            posterPreview = filmDetail.posterPreview,
-            poster = filmDetail.poster,
-            genres = filmDetail.genres,
-            onBackClick = onBackClick,
-            actors = filmDetail.staff,
-            onDescriptionClick = onDescriptionClick,
-            onShowMoreStaffClick = onShowMoreStaffClick,
-            onActorDetail = onActorDetail
-        )
-    }
-
+    FilmDetailItem(
+        filmDescription = detail.filmDetail!!.description,
+        filmName = detail.filmDetail.name,
+        rating = detail.filmDetail.rating,
+        year = detail.filmDetail.year,
+        filmLength = detail.filmDetail.filmLength,
+        posterPreview = detail.filmDetail.posterUrlPreview,
+        poster = detail.filmDetail.posterUrl,
+        genres = detail.filmDetail.genre,
+        persons = detail.filmStaff,
+        onDescriptionClick = onDescriptionClick,
+        onShowMoreStaffClick = onShowMoreStaffClick,
+        onActorDetail = onActorDetail,
+        onBackClick = onBackClick,
+    )
 }
+
 
 @Composable
 fun FilmDetailItem(
@@ -86,12 +76,12 @@ fun FilmDetailItem(
     filmName: String,
     rating: String,
     year: String,
-    filmLength: Int,
+    filmLength: String,
     posterPreview: String,
     poster: String,
     genres: List<Genre>,
     onBackClick: () -> Unit = {},
-    actors: List<Staff>,
+    persons: List<FilmStaff>,
     onDescriptionClick: () -> Unit,
     onShowMoreStaffClick: () -> Unit,
     onActorDetail: (actorId: Int) -> Unit
@@ -122,7 +112,7 @@ fun FilmDetailItem(
             )
             Image(
                 painter = painterResource(id = R.drawable.arrow_back),
-                contentDescription = "back",
+                contentDescription = stringResource(id = R.string.back),
                 modifier = Modifier
                     .padding(start = 4.dp, top = 11.dp)
                     .clickable { onBackClick() }
@@ -143,7 +133,7 @@ fun FilmDetailItem(
             onDescriptionClick = onDescriptionClick
         )
         ActorsList(
-            actors = actors,
+            persons = persons,
             onShowMoreStaffClick = onShowMoreStaffClick,
             onActorDetail = onActorDetail
         )
@@ -157,7 +147,7 @@ fun FilmData(
     rating: String,
     filmName: String,
     year: String,
-    filmLength: Int,
+    filmLength: String,
     posterPreview: String
 ) {
     Row(
@@ -229,7 +219,7 @@ fun FilmDescription(
 ) {
     Column {
         Text(
-            text = "Описание:",
+            text = stringResource(id = R.string.description),
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.padding(top = 14.dp, start = 16.dp)
         )
@@ -246,7 +236,7 @@ fun FilmDescription(
                     style = MaterialTheme.typography.bodySmall,
                 )
                 Text(
-                    text = "Читать далее",
+                    text = stringResource(id = R.string.read_more),
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(start = 16.dp)
@@ -259,25 +249,22 @@ fun FilmDescription(
 
 @Composable
 fun ActorsList(
-    actors: List<Staff>,
+    persons: List<FilmStaff>,
     onShowMoreStaffClick: () -> Unit,
     onActorDetail: (actorId: Int) -> Unit
 ) {
     Column {
         Text(
-            text = "Актеры",
+            text = stringResource(id = R.string.creators),
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.padding(start = 16.dp, top = 15.dp, bottom = 8.dp)
         )
 
-        val actorsSubList = if (actors.size > 14) {
-            actors
-                .subList(0, 15)
-                .filter { it.professionKey == "ACTOR" }
+        val actorsSubList = if (persons.size > 14) {
+            persons.subList(0, 15)
         } else {
-            actors
+            persons
         }
-
         LazyRow {
             items(
                 items = actorsSubList,

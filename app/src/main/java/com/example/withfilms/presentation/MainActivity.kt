@@ -12,7 +12,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
-import com.example.withfilms.domain.model.BottomNavItem
+import com.example.withfilms.presentation.navigation.BottomNavItem
 import com.example.withfilms.presentation.navigation.FilmNavGraph
 import com.example.withfilms.presentation.ui.theme.WithFilmsTheme
 import com.example.withfilms.presentation.utils.CustomBottomAppBar

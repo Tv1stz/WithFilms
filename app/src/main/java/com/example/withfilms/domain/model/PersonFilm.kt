@@ -1,8 +1,8 @@
 package com.example.withfilms.domain.model
 
-data class Film(
+data class PersonFilm(
     val filmId: Int,
     val nameRu: String,
-    val posterUrl: String,
+    val nameEn: String,
     val rating: String
 )

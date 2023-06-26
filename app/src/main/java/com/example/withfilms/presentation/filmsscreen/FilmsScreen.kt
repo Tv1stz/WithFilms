@@ -21,15 +21,16 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemContentType
 import androidx.paging.compose.itemKey
+import com.example.withfilms.R
 import com.example.withfilms.domain.model.Film
 import com.example.withfilms.presentation.utils.FilmItem
-
 
 @ExperimentalMaterial3Api
 @Composable
@@ -45,17 +46,18 @@ fun FilmsScreen(
     Box(modifier = modifier) {
         Column {
             Text(
-                text = "With Films",
+                text = stringResource(id = R.string.app_name),
                 style = MaterialTheme.typography.headlineSmall,
                 modifier = Modifier.padding(start = 14.dp, top = 10.dp)
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Топ 250 фильмов:",
+                text = stringResource(id = R.string.top_250_films),
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.padding(start = 24.dp, top = 4.dp)
             )
             Spacer(modifier = Modifier.height(4.dp))
+
             //  TODO("убрать search и добавить выбор TOP250, TOP100 etc.")
 
             when (films.loadState.refresh) {
@@ -107,12 +109,12 @@ fun ErrorScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Text(text = "Что-то пошло не так")
+            Text(text = stringResource(id = R.string.something_went_wrong))
             Spacer(modifier = Modifier.height(10.dp))
             OutlinedButton(
                 onClick = { onRefreshClick() })
             {
-                Text(text = "Обновить")
+                Text(text = stringResource(id = R.string.refresh))
             }
         }
     }
@@ -130,7 +132,7 @@ fun FilmsPagingList(
         items(
             count = films.itemCount,
             key = films.itemKey(),
-            contentType = films.itemContentType { "contentType" }
+            contentType = films.itemContentType {  }
         ) { index ->
             val film = films[index]
             film?.let {
@@ -142,19 +144,21 @@ fun FilmsPagingList(
                 )
             }
         }
-        item(span =  { GridItemSpan(2) }) {
-            when(films.loadState.append) {
+        item(span = { GridItemSpan(2) }) {
+            when (films.loadState.append) {
                 is LoadState.Loading -> {
                     LoadingScreen(
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
+
                 is LoadState.Error -> {
                     ErrorScreen(
                         modifier = Modifier.fillMaxWidth(),
                         onRefreshClick = { films.retry() }
                     )
                 }
+
                 is LoadState.NotLoading -> {}
             }
         }

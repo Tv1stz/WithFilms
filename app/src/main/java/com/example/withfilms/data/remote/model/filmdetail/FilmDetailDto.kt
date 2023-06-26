@@ -1,17 +1,17 @@
 package com.example.withfilms.data.remote.model.filmdetail
 
-import com.example.withfilms.data.remote.model.CountryNetwork
-import com.example.withfilms.data.remote.model.GenreNetwork
+import com.example.withfilms.data.remote.model.CountryDto
+import com.example.withfilms.data.remote.model.GenreDto
 
 data class FilmDetailDto(
     val completed: Boolean,
-    val countries: List<CountryNetwork>,
+    val countries: List<CountryDto>,
     val coverUrl: String?,
     val description: String?,
     val editorAnnotation: String?,
     val endYear: Int?,
     val filmLength: Int?,
-    val genres: List<GenreNetwork>,
+    val genres: List<GenreDto>,
     val has3D: Boolean,
     val hasImax: Boolean,
     val imdbId: String?,

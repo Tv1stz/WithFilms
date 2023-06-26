@@ -1,13 +1,13 @@
-package com.example.withfilms.data.remote.model.actordetail
+package com.example.withfilms.data.remote.model.persondetail
 
-data class ActorDetailDto(
+data class PersonDetailDto(
     val age: Int,
     val birthday: String?,
     val birthplace: String?,
     val death: String?,
     val deathplace: String?,
     val facts: List<String>,
-    val films: List<ActorFilmsNetwork>,
+    val films: List<PersonFilmDto>,
     val growth: Int,
     val hasAwards: Int,
     val nameEn: String?,
@@ -16,6 +16,6 @@ data class ActorDetailDto(
     val posterUrl: String,
     val profession: String,
     val sex: String,
-    val spouses: List<SpouseNetwork>,
+    val spouses: List<SpouseDto>,
     val webUrl: String
 )

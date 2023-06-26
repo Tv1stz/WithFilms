@@ -7,63 +7,41 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
-import com.example.withfilms.presentation.actordetail.ActorDetailScreen
 import com.example.withfilms.presentation.filmsscreen.FilmsScreen
 import com.example.withfilms.presentation.navigation.filmdetailgraph.detailGraph
 import com.example.withfilms.presentation.navigation.filmdetailgraph.navigateToDetail
+import com.example.withfilms.presentation.navigation.filmdetailgraph.screens.actorDetailScreen
 import com.example.withfilms.presentation.searchscreen.SearchScreen
 
+const val HOME_ROUTE = "home"
+const val SEARCH_ROUTE = "search"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FilmNavGraph(
     navController: NavHostController,
-    startDestination: String = "films"
+    startDestination: String = HOME_ROUTE
 ) {
     NavHost(
         navController = navController,
         startDestination = startDestination
     ) {
-        composable("films") {
+        composable(HOME_ROUTE) {
             FilmsScreen(
                 onFilmClick = { navController.navigateToDetail(it) }
             )
         }
-        composable("search") {
+        composable(SEARCH_ROUTE) {
             SearchScreen(
                 onFilmClick = { navController.navigateToDetail(it) }
             )
         }
-
         detailGraph(navController)
-
-        composable(
-            route = "actorDetail/{actorId}",
-            arguments = listOf(
-                navArgument("actorId") { type = NavType.IntType }
-            )
-        ) { backStackEntry ->
-            val actorId = backStackEntry.arguments?.getInt("actorId") ?: 0
-
-            ActorDetailScreen(
-                onFilmClick = {
-                    navController.navigateToDetail(it)
-                },
-                onBackClick = navController::popBackStack,
-                actorId = actorId
-            )
-        }
+        actorDetailScreen(navController)
     }
 }
-
-fun NavHostController.navigateToActorDetail(actorId: Int) {
-    navigate("actorDetail/$actorId")
-}
-
 
 @Composable
 inline fun <reified T : ViewModel> NavBackStackEntry.sharedViewModel(

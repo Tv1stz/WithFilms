@@ -10,19 +10,19 @@ import com.example.withfilms.presentation.navigation.filmdetailgraph.screens.des
 import com.example.withfilms.presentation.navigation.filmdetailgraph.screens.filmDetailScreen
 import com.example.withfilms.presentation.navigation.filmdetailgraph.screens.filmStaffScreen
 
-private const val filmIdKey = "filmId"
-private const val baseRoute = "detail"
-private const val detailRoute = "$baseRoute/{$filmIdKey}"
-private const val startDestination = "filmDetail"
+private const val FILM_ID_KEY = "filmId"
+private const val BASE_ROUTE = "detail"
+private const val DETAIL_ROUTE = "$BASE_ROUTE/{$FILM_ID_KEY}"
+private const val START_DESTINATION = "filmDetail"
 
 
 fun NavGraphBuilder.detailGraph(
     navController: NavHostController
 ) {
     navigation(
-        route = detailRoute,
-        startDestination = startDestination,
-        arguments = listOf(navArgument(filmIdKey) { type = NavType.IntType })
+        route = DETAIL_ROUTE,
+        startDestination = START_DESTINATION,
+        arguments = listOf(navArgument(FILM_ID_KEY) { type = NavType.IntType })
     )
     {
         filmDetailScreen(navController)
@@ -34,5 +34,5 @@ fun NavGraphBuilder.detailGraph(
 }
 
 fun NavHostController.navigateToDetail(filmId: Int) {
-    navigate("$baseRoute/$filmId")
+    navigate("$BASE_ROUTE/$filmId")
 }
