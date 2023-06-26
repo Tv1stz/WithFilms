@@ -1,6 +1,6 @@
-package com.example.withfilms.domain.model
+package com.example.withfilms.data.remote.model.persondetail
 
-data class Spouse(
+data class SpouseDto(
     val children: Int,
     val divorced: Boolean,
     val divorcedReason: String,

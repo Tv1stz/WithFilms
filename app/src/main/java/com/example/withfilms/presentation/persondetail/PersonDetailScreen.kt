@@ -1,10 +1,11 @@
-package com.example.withfilms.presentation.actordetail
+package com.example.withfilms.presentation.persondetail
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -22,51 +23,89 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
-import com.example.withfilms.domain.model.ActorFilms
+import com.example.withfilms.R
+import com.example.withfilms.domain.model.PersonDetail
+import com.example.withfilms.domain.model.PersonFilm
 import com.example.withfilms.presentation.utils.CustomTopAppBar
+import com.example.withfilms.presentation.utils.ErrorScreen
+import com.example.withfilms.presentation.utils.LoadState.*
+import com.example.withfilms.presentation.utils.LoadingScreen
 import com.example.withfilms.presentation.utils.RatingItem
 
+@Composable
+fun PersonDetailScreen(
+    onFilmClick: (filmId: Int) -> Unit,
+    onBackClick: () -> Unit,
+    personId: Int,
+    viewModel: PersonDetailViewModel = hiltViewModel()
+) {
+    LaunchedEffect(true) {
+        viewModel.getPersonDetail(personId)
+    }
+
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    when (uiState.loadState) {
+        SUCCESS -> {
+            uiState.personDetail?.let {
+                PersonDetail(
+                    personDetail = it,
+                    onFilmClick = onFilmClick,
+                    onBackClick = onBackClick
+                )
+            }
+        }
+
+        ERROR -> {
+            ErrorScreen(
+                modifier = Modifier.fillMaxSize(),
+                message = stringResource(id = R.string.something_went_wrong),
+            )
+        }
+
+        LOADING -> {
+            LoadingScreen(
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ActorDetailScreen(
-    modifier: Modifier = Modifier,
+fun PersonDetail(
+    personDetail: PersonDetail,
     onFilmClick: (filmId: Int) -> Unit,
     onBackClick: () -> Unit,
-    actorId: Int,
-    viewModel: ActorDetailViewModel = hiltViewModel()
+    modifier: Modifier = Modifier
 ) {
-    LaunchedEffect(true) {
-        viewModel.getActorDetail(actorId)
-    }
-
-    val actorDetail by viewModel.actorDetailUiState.collectAsStateWithLifecycle()
-
     Scaffold(
         modifier = modifier,
         topBar = {
-        CustomTopAppBar(title = actorDetail.nameRu) {
-            onBackClick()
-        }
-    }) { contentPadding ->
+            CustomTopAppBar(title = personDetail.nameRu) {
+                onBackClick()
+            }
+        }) { contentPadding ->
         Box(modifier = Modifier.padding(contentPadding)) {
-            Column {
-                ActorInfo(actorDetail = actorDetail)
+            Column(
+                modifier = Modifier.padding(top = 10.dp)
+            ) {
+                PersonInfo(personDetail = personDetail)
                 Spacer(modifier = Modifier.height(20.dp))
                 Text(
-                    text = "Фильмы",
+                    text = stringResource(id = R.string.films),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(start = 29.dp, bottom = 8.dp)
                 )
-                LazyColumn{
-                    items(items = actorDetail.films) { film ->
+                LazyColumn {
+                    items(items = personDetail.films) { film ->
                         FilmCard(
                             film = film,
                             onFilmClick = onFilmClick
@@ -79,8 +118,8 @@ fun ActorDetailScreen(
 }
 
 @Composable
-fun ActorInfo(
-    actorDetail: ActorDetailUiState
+fun PersonInfo(
+    personDetail: PersonDetail
 ) {
     Row(
         modifier = Modifier
@@ -88,8 +127,8 @@ fun ActorInfo(
             .padding(start = 28.dp),
     ) {
         AsyncImage(
-            model = actorDetail.poster,
-            contentDescription = actorDetail.nameRu,
+            model = personDetail.posterUrl,
+            contentDescription = personDetail.nameRu,
             modifier = Modifier
                 .height(226.dp)
                 .width(144.dp)
@@ -98,55 +137,54 @@ fun ActorInfo(
         Spacer(modifier = Modifier.width(16.dp))
         Column {
             Text(
-                text = actorDetail.nameRu,
+                text = personDetail.nameRu,
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(6.dp))
             Text(
-                text = actorDetail.nameEn,
+                text = personDetail.nameEn,
                 style = MaterialTheme.typography.titleMedium,
             )
             Spacer(modifier = Modifier.height(15.dp))
             Text(
-                text =  actorDetail.profession,
+                text = personDetail.profession,
                 style = MaterialTheme.typography.bodySmall,
                 modifier = Modifier.padding(bottom = 4.dp)
             )
-            Text(
-                text = "Дата рождения: ${actorDetail.birthday}",
-                style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier.padding(bottom = 4.dp)
+            InformationOnPerson(
+                info = "${stringResource(id = R.string.birthday)} ${personDetail.birthday}"
             )
-            Text(
-                text = "Дата смерти: ${actorDetail.death}",
-                style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier.padding(bottom = 4.dp)
+            InformationOnPerson(
+                info = "${stringResource(id = R.string.death)} ${personDetail.death}"
             )
-            Text(
-                text = "Возраст: ${actorDetail.age}",
-                style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier.padding(bottom = 4.dp)
-            )
-            Text(
-                text = "Пол: ${actorDetail.sex}",
-                style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier.padding(bottom = 4.dp)
-            )
+            InformationOnPerson(info = "${stringResource(id = R.string.age)} ${personDetail.age}")
+            InformationOnPerson(info = "${stringResource(id = R.string.sex)} ${personDetail.sex}")
         }
     }
 }
 
 @Composable
+fun InformationOnPerson(
+    info: String
+) {
+    Text(
+        text = info,
+        style = MaterialTheme.typography.bodySmall,
+        modifier = Modifier.padding(bottom = 4.dp)
+    )
+}
+
+@Composable
 fun FilmCard(
-    film: ActorFilms,
+    film: PersonFilm,
     onFilmClick: (filmId: Int) -> Unit,
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onFilmClick(film.filmId) }
-    ){
+    ) {
         Column(
             modifier = Modifier.padding(horizontal = 22.dp)
         ) {
@@ -162,16 +200,12 @@ fun FilmCard(
             )
             Spacer(modifier = Modifier.height(8.dp))
             RatingItem(rating = film.rating)
-            Divider(modifier = Modifier
-                .fillMaxWidth()
-                .padding(4.dp))
+            Divider(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(4.dp)
+            )
         }
-
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun ActorDetailScreenPreview() {
-
-}

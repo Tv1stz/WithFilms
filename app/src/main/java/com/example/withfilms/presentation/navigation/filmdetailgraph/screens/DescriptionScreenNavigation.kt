@@ -10,18 +10,18 @@ import com.example.withfilms.presentation.filmdetail.SharedFilmDetailViewModel
 import com.example.withfilms.presentation.filmdetail.descriptionscreen.DescriptionScreen
 import com.example.withfilms.presentation.navigation.sharedViewModel
 
-private const val descriptionRoute = "filmDescription"
+private const val DESCRIPTION_ROUTE = "filmDescription"
 
 @OptIn(ExperimentalMaterial3Api::class)
 fun NavGraphBuilder.descriptionScreen(
     navController: NavHostController
 ) {
     composable(
-        route = descriptionRoute,
+        route = DESCRIPTION_ROUTE,
     ) {
         val viewModel = it.sharedViewModel<SharedFilmDetailViewModel>(navController)
-        val filmDetailState by viewModel.filmUiState.collectAsState()
-        val description = filmDetailState.description
+        val filmDetailState by viewModel.uiState.collectAsState()
+        val description = filmDetailState.filmDetail!!.description
 
         DescriptionScreen(
             description = description,
@@ -31,5 +31,5 @@ fun NavGraphBuilder.descriptionScreen(
 }
 
 fun NavHostController.navigateToDescription() {
-    navigate(descriptionRoute)
+    navigate(DESCRIPTION_ROUTE)
 }

@@ -1,7 +1,8 @@
 package com.example.withfilms.presentation.filmdetail.filmstaffscreen
 
 import androidx.lifecycle.ViewModel
-import com.example.withfilms.domain.model.Staff
+import com.example.withfilms.R
+import com.example.withfilms.domain.model.FilmStaff
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,36 +17,36 @@ class FilmStaffViewModel @Inject constructor(): ViewModel() {
     )
     val staffUiState = _staffUiState.asStateFlow()
 
-    private var localStaff: MutableMap<String, MutableList<Staff>> = mutableMapOf(
-        "Режиссер" to mutableListOf(),
-        "Актер" to mutableListOf(),
-        "Продюсер" to mutableListOf(),
-        "Сцинарист" to mutableListOf(),
-        "Оператор" to mutableListOf(),
-        "Композитор" to mutableListOf(),
-        "Художник" to mutableListOf(),
-        "Монтажер" to mutableListOf()
+    private var localStaff: MutableMap<String, MutableList<FilmStaff>> = mutableMapOf(
+        "${R.string.director}" to mutableListOf(),
+        "${R.string.actor}" to mutableListOf(),
+        "${R.string.producer}" to mutableListOf(),
+        "${R.string.writer}" to mutableListOf(),
+        "${R.string.composer}" to mutableListOf(),
+        "${R.string.design}" to mutableListOf(),
+        "${R.string.editor}" to mutableListOf(),
+        "${R.string.operator}" to mutableListOf()
     )
 
-    fun sortedStaff(staff: List<Staff>) {
+    fun sortedStaff(staff: List<FilmStaff>) {
         for (person in staff) {
             if (person.nameRu.isNotBlank()) {
                 when (person.professionKey) {
-                    "DIRECTOR" -> { localStaff["Режиссер"]?.add(person) }
-                    "ACTOR" -> { localStaff["Актер"]?.add(person) }
-                    "PRODUCER" -> { localStaff["Продюсер"]?.add(person) }
-                    "WRITER" -> { localStaff["Сцинарист"]?.add(person) }
-                    "COMPOSER" -> { localStaff["Композитор"]?.add(person) }
-                    "DESIGN" -> { localStaff["Художник"]?.add(person) }
-                    "EDITOR" -> { localStaff["Монтажер"]?.add(person) }
-                    "OPERATOR" -> { localStaff["Оператор"]?.add(person) }
+                    "DIRECTOR" -> { localStaff["${R.string.director}"]?.add(person) }
+                    "ACTOR" -> { localStaff["${R.string.actor}"]?.add(person) }
+                    "PRODUCER" -> { localStaff["${R.string.producer}"]?.add(person) }
+                    "WRITER" -> { localStaff["${R.string.writer}"]?.add(person) }
+                    "COMPOSER" -> { localStaff["${R.string.composer}"]?.add(person) }
+                    "DESIGN" -> { localStaff["${R.string.design}"]?.add(person) }
+                    "EDITOR" -> { localStaff["${R.string.editor}"]?.add(person) }
+                    "OPERATOR" -> { localStaff["${R.string.operator}"]?.add(person) }
                 }
             }
         }
         successStaff(localStaff)
     }
 
-    private fun successStaff(staff: Map<String, List<Staff>>) {
+    private fun successStaff(staff: Map<String, List<FilmStaff>>) {
         _staffUiState.update { state ->
             state.copy(
                 staff = staff,
@@ -57,6 +58,6 @@ class FilmStaffViewModel @Inject constructor(): ViewModel() {
 }
 
 data class StaffUiState(
-    val staff: Map<String, List<Staff>> = emptyMap(),
+    val staff: Map<String, List<FilmStaff>> = emptyMap(),
     val isLoading: Boolean = true,
 )

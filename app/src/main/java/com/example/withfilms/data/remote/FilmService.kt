@@ -1,11 +1,11 @@
 package com.example.withfilms.data.remote
 
 
-import com.example.withfilms.data.remote.model.actordetail.ActorDetailDto
+import com.example.withfilms.data.remote.model.persondetail.PersonDetailDto
 import com.example.withfilms.data.remote.model.filmdetail.FilmDetailDto
-import com.example.withfilms.data.remote.model.films.FilmDto
+import com.example.withfilms.data.remote.model.films.GetFilmsResponse
 import com.example.withfilms.data.remote.model.filmstaff.FilmStaffDto
-import com.example.withfilms.data.remote.model.searchfilms.SearchFilmsDto
+import com.example.withfilms.data.remote.model.searchfilms.GetSearchFilmsResponse
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -27,7 +27,7 @@ interface FilmService {
         @Header("X-API-KEY") key: String = API_KEY,
         @Query("type") type: String = TOP_250,
         @Query("page") page: Int,
-    ): FilmDto
+    ): GetFilmsResponse
 
     @GET("v2.2/films/{id}")
     suspend fun getFilmDetailById(
@@ -46,13 +46,13 @@ interface FilmService {
         @Header("X-API-KEY") key: String = API_KEY,
         @Query("keyword") keyWord: String,
         @Query("page") page: Int = 1,
-    ): SearchFilmsDto
+    ): GetSearchFilmsResponse
 
     @GET("v1/staff/{id}")
-    suspend fun getActorDetailById(
+    suspend fun getPersonDetailById(
         @Header("X-API-KEY") key: String = API_KEY,
         @Path("id") actorId: Int
-    ): ActorDetailDto
+    ): PersonDetailDto
 
     companion object {
 

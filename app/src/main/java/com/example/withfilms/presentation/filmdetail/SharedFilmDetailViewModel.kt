@@ -2,10 +2,12 @@ package com.example.withfilms.presentation.filmdetail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.withfilms.data.Repository
 import com.example.withfilms.domain.model.FilmDetail
-import com.example.withfilms.domain.model.Staff
-import com.example.withfilms.domain.model.Genre
+import com.example.withfilms.domain.model.FilmStaff
+import com.example.withfilms.domain.usecases.GetFilmDetailByIdUseCase
+import com.example.withfilms.domain.usecases.GetFilmStaffByIdUseCase
+import com.example.withfilms.presentation.utils.LoadState
+import com.example.withfilms.util.Request
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,63 +17,67 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SharedFilmDetailViewModel @Inject constructor(
-    private val repository: Repository
+    private val getFilmStaffByIdUseCase: GetFilmStaffByIdUseCase,
+    private val getFilmDetailByIdUseCase: GetFilmDetailByIdUseCase
 ) : ViewModel() {
 
     private var filmId: Int? = null
 
-    private val _filmDetailUiState = MutableStateFlow(
-        FilmDetailUiState(isLoading = true)
+    private val _uiState = MutableStateFlow(
+        FilmDetailUiState()
     )
-    val filmUiState = _filmDetailUiState.asStateFlow()
+    val uiState = _uiState.asStateFlow()
 
     fun onStart(
         filmId: Int
     ) {
         if (filmId != this.filmId) {
             viewModelScope.launch {
-                val film = repository.getFilmDetailById(filmId)
-                val filmStaff = repository.getFilmStaffByFilmId(filmId)
-
-                successFilmDetail(film, filmStaff)
+                handleFilmDetail(filmId = filmId)
+                handleFilmStaff(filmId = filmId)
             }
             this.filmId = filmId
         }
     }
 
-   private fun successFilmDetail(movie: FilmDetail, staff: List<Staff>) {
+    private suspend fun handleFilmDetail(filmId: Int) {
+        getFilmDetailByIdUseCase.invoke(filmId).collect { request ->
+            when (request) {
+                is Request.Success -> {
+                    _uiState.update { value ->
+                        value.copy(
+                            filmDetail = request.data,
+                            loadState = LoadState.SUCCESS
+                        )
+                    }
+                }
+                is Request.Error -> _uiState.update { it.copy(loadState = LoadState.ERROR) }
+                is Request.Loading -> _uiState.update { it.copy(loadState = LoadState.LOADING) }
+            }
+        }
+    }
 
-        _filmDetailUiState.update { state ->
-            state.copy(
-                filmId = movie.filmId,
-                filmName = movie.filmName,
-                rating = movie.rating,
-                genres = movie.genres,
-                description = movie.description,
-                filmLength = movie.filmLength,
-                year = movie.year,
-                posterPreview = movie.posterPreview,
-                poster = movie.poster,
-                isLoading = false,
-
-                staff = staff
-            )
+    private suspend fun handleFilmStaff(filmId: Int) {
+        getFilmStaffByIdUseCase.invoke(filmId).collect { request ->
+            when (request) {
+                is Request.Success -> {
+                    _uiState.update { value ->
+                        value.copy(
+                            filmStaff = request.data,
+                            loadState = LoadState.SUCCESS
+                        )
+                    }
+                }
+                is Request.Error -> _uiState.update { it.copy(loadState = LoadState.ERROR) }
+                is Request.Loading -> _uiState.update { it.copy(loadState = LoadState.LOADING) }
+            }
         }
     }
 }
 
 data class FilmDetailUiState(
-    val filmId: Int = 0,
-    val filmName: String = "",
-    val rating: String = "",
-    val genres: List<Genre> = emptyList(),
-    val description: String = "",
-    val filmLength: Int = 0,
-    val year: String = "",
-    val posterPreview: String = "",
-    val poster: String = "",
-    val staff: List<Staff> = emptyList(),
-
-    val isLoading: Boolean = false,
+    val filmDetail: FilmDetail? = null,
+    val filmStaff: List<FilmStaff> = emptyList(),
+    val loadState: LoadState = LoadState.LOADING
 )
 

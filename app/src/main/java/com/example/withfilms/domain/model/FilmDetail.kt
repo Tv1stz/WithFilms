@@ -1,13 +1,13 @@
 package com.example.withfilms.domain.model
 
 data class FilmDetail(
-    val filmId: Int = 0,
-    val filmName: String = "",
-    val rating: String = "",
-    val genres: List<Genre> = emptyList(),
-    val description: String = "",
-    val filmLength: Int = 0,
-    val year: String = "",
-    val posterPreview: String = "",
-    val poster: String = ""
+    val filmId: Int,
+    val posterUrl: String,
+    val posterUrlPreview: String,
+    val year: String,
+    val name: String,
+    val description: String,
+    val genre: List<Genre>,
+    val filmLength: String,
+    val rating: String
 )

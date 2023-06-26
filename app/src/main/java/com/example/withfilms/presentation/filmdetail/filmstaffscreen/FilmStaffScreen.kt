@@ -26,13 +26,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
-import com.example.withfilms.domain.model.Staff
+import com.example.withfilms.domain.model.FilmStaff
 import com.example.withfilms.presentation.utils.CustomTopAppBar
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun FilmStaffScreen(
-    staff: List<Staff>,
+    staff: List<FilmStaff>,
     filmName: String,
     onBackClick: () -> Unit,
     onActorClick: (actorId: Int) -> Unit,
@@ -61,13 +61,13 @@ fun FilmStaffScreen(
                 LazyColumn {
                     localStaff.forEach { (profession, persons) ->
                         stickyHeader {
-                            SubItems(subItems = profession)
+                            ProfessionTitle(professionTitle = profession)
                         }
 
                         items(persons) {person ->
-                            ActorItem(
+                            PersonItem(
                                 person = person,
-                                onActorClick = onActorClick
+                                onPersonClick = onActorClick
                             )
                         }
                     }
@@ -78,27 +78,27 @@ fun FilmStaffScreen(
 }
 
 @Composable
-fun SubItems(
-    subItems: String,
+fun ProfessionTitle(
+    professionTitle: String,
 ) {
     Row {
        Text(
-           text = subItems,
+           text = professionTitle,
            style = MaterialTheme.typography.titleMedium
        ) 
     }
 }
 
 @Composable
-fun ActorItem(
-    onActorClick: (actorId: Int) -> Unit,
-    person: Staff
+fun PersonItem(
+    onPersonClick: (actorId: Int) -> Unit,
+    person: FilmStaff
 ) {
     Row(
         modifier = Modifier
             .height(100.dp)
             .padding(4.dp)
-            .clickable { onActorClick(person.staffId) }
+            .clickable { onPersonClick(person.staffId) }
     ) {
         AsyncImage(
             model = person.posterUrl,
@@ -120,7 +120,7 @@ fun ActorItem(
                 style = MaterialTheme.typography.bodySmall
             )
             Text(
-                text = person.description ?: "",
+                text = person.description,
                 style = MaterialTheme.typography.bodySmall,
                 color = Color.Gray,
                 modifier = Modifier.padding(top = 24.dp)
@@ -131,17 +131,16 @@ fun ActorItem(
 
 @Preview(showBackground = true)
 @Composable
-fun ActorItemPreview() {
-    ActorItem(
-        person = Staff(
+fun PersonItemPreview() {
+    PersonItem(
+        person = FilmStaff(
             description = "Clara Mayfield",
             nameEn = "Whoopi Goldberg",
             nameRu = "Вупи Голдберг",
             posterUrl = "",
             professionKey = "ACTOR",
-            professionText = "Актеры",
             staffId = 212
         ),
-        onActorClick = {}
+        onPersonClick = {}
     )
 }

@@ -2,15 +2,15 @@ package com.example.withfilms.data.remote
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.example.withfilms.data.remote.model.films.FilmNetwork
+import com.example.withfilms.data.remote.model.films.FilmDto
 import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
 class FilmPagingSource @Inject constructor(
     private val filmService: FilmService
-) : PagingSource<Int, FilmNetwork>() {
-    override fun getRefreshKey(state: PagingState<Int, FilmNetwork>): Int? {
+) : PagingSource<Int, FilmDto>() {
+    override fun getRefreshKey(state: PagingState<Int, FilmDto>): Int? {
         return state.anchorPosition?.let {
             state.closestPageToPosition(it)?.prevKey?.plus(1)
                 ?: state.closestPageToPosition(it)?.nextKey?.minus(1)
@@ -18,7 +18,7 @@ class FilmPagingSource @Inject constructor(
         }
     }
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, FilmNetwork> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, FilmDto> {
 
         return try {
             val pageNumber = params.key ?: 1

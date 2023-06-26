@@ -7,16 +7,21 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.withfilms.R
+import com.example.withfilms.presentation.ui.theme.WithFilmsTheme
 import com.example.withfilms.presentation.utils.CustomSearch
 import com.example.withfilms.presentation.utils.FilmItem
+import com.example.withfilms.presentation.utils.LoadState
+import com.example.withfilms.presentation.utils.LoadingScreen
+import com.example.withfilms.presentation.utils.NotFoundScreen
 
 @Composable
 fun SearchScreen(
@@ -25,39 +30,60 @@ fun SearchScreen(
     onFilmClick: (filmId: Int) -> Unit,
 ) {
 
-    val state by viewModel.searchResult.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     Box(modifier = modifier.padding(top = 10.dp)) {
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
             CustomSearch(
-                query = state.query,
+                query = uiState.query,
                 onChangeQuery = {
                     viewModel.onNewQuery(it)
                 },
-                hint = "фильмы, сериалы и т.д."
+                hint = stringResource(id = R.string.search_films)
             )
-            if (state.isLoading) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) { CircularProgressIndicator() }
-            } else {
-                LazyVerticalGrid(columns = GridCells.Fixed(2),) {
-                    items(items = state.films, key = {it.filmId}) { film ->
-                        FilmItem(
-                            film = film,
-                            onFilmClick = onFilmClick,
-                            Modifier
-                                .padding(10.dp),
-                        )
+
+            when(uiState.loadState) {
+                LoadState.LOADING -> {
+                    LoadingScreen(
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
+
+                LoadState.ERROR -> {
+                    NotFoundScreen(
+                        modifier = Modifier.fillMaxSize(),
+                        message = stringResource(id = R.string.nothing_found),
+                    )
+                }
+
+                else -> {
+                    LazyVerticalGrid(columns = GridCells.Fixed(2)) {
+                        items(items = uiState.films, key = { it.filmId }) { film ->
+                            FilmItem(
+                                film = film,
+                                onFilmClick = onFilmClick,
+                                Modifier
+                                    .padding(10.dp),
+                            )
+                        }
                     }
                 }
             }
         }
     }
-    // TODO("Фильмы которые скоро выйдут, жанры")
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SearchScreenPreview() {
+    WithFilmsTheme() {
+        SearchScreen(
+            modifier = Modifier.fillMaxSize(),
+            onFilmClick = {}
+        )
+    }
 }
 
 

@@ -49,7 +49,7 @@ fun FilmItem(
                     contentDescription = film.nameRu
                 )
                 Text(
-                    text = film.nameRu ?: "нет имени",
+                    text = film.nameRu,
                     style = MaterialTheme.typography.titleSmall,
                     modifier = Modifier.padding(top = 5.dp),
                     maxLines = 1,

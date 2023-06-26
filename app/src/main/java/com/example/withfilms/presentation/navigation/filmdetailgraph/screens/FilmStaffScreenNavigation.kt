@@ -7,29 +7,28 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.example.withfilms.presentation.filmdetail.SharedFilmDetailViewModel
 import com.example.withfilms.presentation.filmdetail.filmstaffscreen.FilmStaffScreen
-import com.example.withfilms.presentation.navigation.navigateToActorDetail
 import com.example.withfilms.presentation.navigation.sharedViewModel
 
-private const val filmStaffRoute = "filmStaff"
+private const val FILM_STAFF_ROUTE = "filmStaff"
 
 fun NavGraphBuilder.filmStaffScreen(
     navController: NavHostController
 ) {
     composable(
-        route = filmStaffRoute
+        route = FILM_STAFF_ROUTE
     ) {backStackEntry ->
         val viewModel = backStackEntry.sharedViewModel<SharedFilmDetailViewModel>(navController)
-        val filmDetailState by viewModel.filmUiState.collectAsStateWithLifecycle()
+        val filmDetailState by viewModel.uiState.collectAsStateWithLifecycle()
 
         FilmStaffScreen(
             onBackClick = navController::popBackStack,
-            filmName = filmDetailState.filmName,
-            staff = filmDetailState.staff,
+            filmName = filmDetailState.filmDetail!!.name,
+            staff = filmDetailState.filmStaff,
             onActorClick = { navController.navigateToActorDetail(it) }
         )
     }
 }
 
 fun NavHostController.navigateToFilmStaff() {
-    navigate(filmStaffRoute)
+    navigate(FILM_STAFF_ROUTE)
 }

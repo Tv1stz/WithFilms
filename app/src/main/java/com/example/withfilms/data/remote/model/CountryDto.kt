@@ -1,5 +1,5 @@
 package com.example.withfilms.data.remote.model
 
-data class CountryNetwork(
+data class CountryDto(
     val country: String
 )

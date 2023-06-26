@@ -1,3 +1,29 @@
 <resources>
-    <string name="app_name">WithFilms</string>
+    <string name="app_name">With Films</string>
+    <string name="error_connection">Проверьте соединение</string>
+    <string name="search">Поиск</string>
+    <string name="home">Главное</string>
+    <string name="refresh">Обновить</string>
+    <string name="something_went_wrong">Что-то пошло не так</string>
+    <string name="top_250_films">Топ 250 фильмов:</string>
+    <string name="search_films">Фильмы, сериалы и т.д.</string>
+    <string name="nothing_found">Ничего не найдено</string>
+    <string name="description">Описание</string>
+    <string name="creators">Создатели</string>
+    <string name="read_more">Читать далее</string>
+    <string name="show_more">Показать ещё</string>
+    <string name="sex">Пол</string>
+    <string name="birthday">День рождения:</string>
+    <string name="death">Дата смерти:</string>
+    <string name="age">Возраст:</string>
+    <string name="films">Фильмы</string>
+    <string name="back">Назад</string>
+    <string name="director">Режиссер</string>
+    <string name="actor">Актер</string>
+    <string name="producer">Продюсер</string>
+    <string name="writer">Сцинарист</string>
+    <string name="composer">Композитор</string>
+    <string name="design">Художник</string>
+    <string name="editor">Монтажер</string>
+    <string name="operator">Оператор</string>
 </resources>

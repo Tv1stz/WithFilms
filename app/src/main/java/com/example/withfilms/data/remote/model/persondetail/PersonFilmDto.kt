@@ -1,6 +1,6 @@
-package com.example.withfilms.data.remote.model.actordetail
+package com.example.withfilms.data.remote.model.persondetail
 
-data class ActorFilmsNetwork(
+data class PersonFilmDto(
     val description: String,
     val filmId: Int,
     val general: Boolean,

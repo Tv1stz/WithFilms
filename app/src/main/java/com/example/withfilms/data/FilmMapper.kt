@@ -1,128 +1,85 @@
 package com.example.withfilms.data
 
-import com.example.withfilms.data.remote.model.GenreNetwork
-import com.example.withfilms.data.remote.model.CountryNetwork
-import com.example.withfilms.data.remote.model.actordetail.ActorDetailDto
-import com.example.withfilms.data.remote.model.actordetail.ActorFilmsNetwork
-import com.example.withfilms.data.remote.model.actordetail.SpouseNetwork
+import com.example.withfilms.data.remote.model.GenreDto
+import com.example.withfilms.data.remote.model.persondetail.PersonDetailDto
+import com.example.withfilms.data.remote.model.persondetail.PersonFilmDto
 import com.example.withfilms.data.remote.model.filmdetail.FilmDetailDto
-import com.example.withfilms.data.remote.model.films.FilmNetwork
+import com.example.withfilms.data.remote.model.films.FilmDto
 import com.example.withfilms.data.remote.model.filmstaff.FilmStaffDto
-import com.example.withfilms.data.remote.model.searchfilms.SearchFilmNetwork
-import com.example.withfilms.domain.model.ActorDetail
-import com.example.withfilms.domain.model.ActorFilms
-import com.example.withfilms.domain.model.Country
+import com.example.withfilms.data.remote.model.searchfilms.SearchFilmDto
+import com.example.withfilms.domain.model.PersonDetail
+import com.example.withfilms.domain.model.PersonFilm
 import com.example.withfilms.domain.model.Film
 import com.example.withfilms.domain.model.FilmDetail
-import com.example.withfilms.domain.model.Staff
+import com.example.withfilms.domain.model.FilmStaff
 import com.example.withfilms.domain.model.Genre
-import com.example.withfilms.domain.model.Spouse
+
+private const val MALE = "Мужской"
+private const val FEMALE = "Женский"
+private const val NO_RATING = "0.0"
+private const val NO_NAME = "нет имени"
+private const val NO_DESCRIPTION = "нет описания"
+private const val NOTHING = ""
+
+fun FilmDto.toFilm() = Film(
+    filmId = filmId,
+    nameRu = nameRu,
+    posterUrl = posterUrl,
+    rating = (rating ?: 0.0).toString(),
+)
+
+fun SearchFilmDto.toFilm() = Film(
+    filmId = filmId,
+    nameRu = nameRu,
+    posterUrl = posterUrl,
+    rating = rating ?: NO_RATING
+)
+
+fun PersonDetailDto.toPersonDetail() = PersonDetail(
+    personId = personId,
+    birthday = birthday ?: NOTHING,
+    death = death ?: NOTHING,
+    profession = profession,
+    posterUrl = posterUrl,
+    nameEn = nameEn ?: NOTHING,
+    nameRu = nameRu ?: NOTHING,
+    films = films.toPersonFilm() ,
+    sex = if (sex == MALE) MALE else FEMALE,
+    age = age.toString()
+)
+
+fun PersonFilmDto.toPersonFilm() = PersonFilm(
+    filmId = filmId,
+    nameRu = nameRu ?: NOTHING,
+    nameEn = nameEn ?: NOTHING,
+    rating = (rating ?: 0.0).toString()
+)
 
 fun FilmDetailDto.toFilmDetail() = FilmDetail(
     filmId = kinopoiskId,
-    filmName = nameRu ?: nameEn ?: nameOriginal ?: "",
-    rating = (ratingKinopoisk ?: 0.0).toString(),
-    genres = genres.toGenre(),
-    description = description ?: "нет описания",
-    filmLength = filmLength ?: 0,
+    posterUrl = posterUrl,
+    posterUrlPreview = posterUrlPreview,
     year = year.toString(),
-    posterPreview = posterUrlPreview,
-    poster = posterUrl
+    name = nameRu ?: nameEn ?: NO_NAME,
+    description = description ?: shortDescription ?: NO_DESCRIPTION,
+    genre = genres.toGenre(),
+    filmLength = filmLength.toString(),
+    rating = (ratingKinopoisk ?: 0.0).toString()
 )
 
-fun FilmStaffDto.toStaff() = Staff(
-    description = description,
-    nameEn = nameEn,
+fun FilmStaffDto.toFilmStaff() = FilmStaff(
+    staffId = staffId,
     nameRu = nameRu,
+    nameEn = nameEn,
     posterUrl = posterUrl,
     professionKey = professionKey,
-    professionText = professionText,
-    staffId = staffId
+    description = description ?: NOTHING
 )
 
-fun FilmNetwork.toFilm() = Film(
-    countries = countries.toCountry(),
-    filmId = filmId,
-    filmLength = filmLength,
-    genres = genres.toGenre(),
-    nameEn = nameEn,
-    nameRu = nameRu,
-    posterUrl = posterUrl,
-    posterUrlPreview = posterUrlPreview,
-    rating = (rating ?: 0.0).toString(),
-    ratingChange = ratingChange,
-    ratingVoteCount = ratingVoteCount,
-    year = year,
-    description = null,
-    type = null
-)
+fun GenreDto.toGenre() = Genre(genre)
 
-fun SearchFilmNetwork.toFilm() = Film(
-    countries = countries.toCountry(),
-    description = description,
-    filmId = filmId,
-    filmLength = filmLength,
-    genres = genres.toGenre(),
-    nameEn = nameEn,
-    nameRu = nameRu,
-    posterUrl = posterUrl,
-    posterUrlPreview = posterUrlPreview,
-    rating = (rating ?: 0.0).toString(),
-    ratingVoteCount = ratingVoteCount,
-    type = type,
-    year = year,
-    ratingChange = null
-)
+fun List<PersonFilmDto>.toPersonFilm() = map(PersonFilmDto::toPersonFilm)
 
-fun SpouseNetwork.toSpouse() = Spouse(
-    children = children,
-    divorced = divorced,
-    divorcedReason = divorcedReason,
-    name = name,
-    personId = personId,
-    relation = relation,
-    sex = sex,
-    webUrl = webUrl
-)
+fun List<GenreDto>.toGenre() = map(GenreDto::toGenre)
 
-fun ActorFilmsNetwork.toActorFilms() = ActorFilms(
-    description = description,
-    filmId = filmId,
-    general = general,
-    nameEn = nameEn ?: "",
-    nameRu = nameRu ?: "",
-    professionKey = professionKey,
-    rating = rating ?: "0.0"
-)
 
-fun ActorDetailDto.toActorDetail() = ActorDetail(
-    age = age,
-    birthday = birthday ?: "",
-    birthplace = birthplace ?: "",
-    death = death ?: "",
-    deathplace = deathplace ?: "",
-    facts = facts,
-    films = films.toActorFilms(),
-    growth = growth,
-    hasAwards = hasAwards,
-    nameEn = nameEn ?: "",
-    nameRu = nameRu ?: "",
-    personId = personId,
-    posterUrl = posterUrl,
-    profession = profession,
-    sex = sex,
-    spouses = spouses.toSpouse(),
-    webUrl = webUrl
-)
-
-fun GenreNetwork.toGenre() = Genre(genre = genre)
-
-fun CountryNetwork.toCountry() = Country(country = country)
-
-fun List<GenreNetwork>.toGenre() = map(GenreNetwork::toGenre)
-
-fun List<CountryNetwork>.toCountry() = map(CountryNetwork::toCountry)
-
-fun List<SpouseNetwork>.toSpouse() = map(SpouseNetwork::toSpouse)
-
-fun List<ActorFilmsNetwork>.toActorFilms() = map(ActorFilmsNetwork::toActorFilms)

@@ -2,9 +2,12 @@ package com.example.withfilms.presentation.searchscreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.withfilms.data.Repository
 import com.example.withfilms.domain.model.Film
+import com.example.withfilms.domain.usecases.GetSearchFilmsByKeyWordUseCase
+import com.example.withfilms.presentation.utils.LoadState
+import com.example.withfilms.util.Request
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,13 +20,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val repository: Repository
+    private val getSearchFilmsByKeyWordUseCase: GetSearchFilmsByKeyWordUseCase
 ) : ViewModel() {
 
     private val queryFlow = MutableStateFlow("")
 
-    private val _searchResult = MutableStateFlow(SearchUiState())
-    val searchResult = _searchResult.asStateFlow()
+    private val _uiState = MutableStateFlow(SearchUiState())
+    val uiState = _uiState.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -35,7 +38,7 @@ class SearchViewModel @Inject constructor(
     }
 
     fun onNewQuery(query: String) {
-        _searchResult.update { value ->
+        _uiState.update { value ->
             value.copy(
                 query = query
             )
@@ -43,7 +46,7 @@ class SearchViewModel @Inject constructor(
         queryFlow.value = query
     }
 
-    private suspend fun handleQuery(query: String) {
+    private fun handleQuery(query: String) {
         emitShowOrHideProgress(query)
 
         if (query.isNotEmpty()) {
@@ -52,31 +55,62 @@ class SearchViewModel @Inject constructor(
     }
 
     private fun emitShowOrHideProgress(query: String) {
-        _searchResult.update { value ->
+        _uiState.update { value ->
             if (query.isEmpty()) {
                 value.copy(
-                    isLoading = false,
+                    loadState = LoadState.ERROR,
                     films = emptyList()
                 )
             } else {
                 value.copy(
-                    isLoading = true
+                    loadState = LoadState.LOADING,
                 )
             }
         }
     }
 
-    private suspend fun handleSearchFilm(query: String) {
-        delay(1_000L)
-        val filmResult = repository.getSearchFilmByKeyWord(query)
-        emitSuccessState(filmResult)
+    private fun handleSearchFilm(query: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            delay(1_000L)
+
+            getSearchFilmsByKeyWordUseCase.invoke(query).collect {request ->
+                when (request) {
+                    is Request.Loading -> {
+                        _uiState.update { value ->
+                            value.copy(
+                                loadState = LoadState.LOADING
+                            )
+                        }
+                    }
+                    is Request.Error -> {
+                        emitErrorState()
+                    }
+                    is Request.Success -> {
+                        val data = request.data
+                        emitSuccessState(films = data)
+                    }
+                }
+            }
+        }
+
+
+
+    }
+
+    private fun emitErrorState() {
+        _uiState.update { value ->
+            value.copy(
+                loadState = LoadState.ERROR,
+                films = emptyList()
+            )
+        }
     }
 
     private fun emitSuccessState(films: List<Film>) {
-        _searchResult.update { value ->
+        _uiState.update { value ->
             value.copy(
-                isLoading = false,
-                films = films
+                films = films,
+                loadState = LoadState.SUCCESS
             )
         }
     }
@@ -84,6 +118,6 @@ class SearchViewModel @Inject constructor(
 
 data class SearchUiState(
     val query: String = "",
-    val isLoading: Boolean = true,
-    val films: List<Film> = emptyList()
+    val films: List<Film> = emptyList(),
+    val loadState: LoadState = LoadState.LOADING
 )

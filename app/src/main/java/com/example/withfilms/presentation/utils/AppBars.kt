@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.withfilms.R
-import com.example.withfilms.domain.model.BottomNavItem
+import com.example.withfilms.presentation.navigation.BottomNavItem
 
 @Composable
 fun CustomBottomAppBar(
