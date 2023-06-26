@@ -18,28 +18,28 @@ class FilmStaffViewModel @Inject constructor(): ViewModel() {
     val staffUiState = _staffUiState.asStateFlow()
 
     private var localStaff: MutableMap<String, MutableList<FilmStaff>> = mutableMapOf(
-        "${R.string.director}" to mutableListOf(),
-        "${R.string.actor}" to mutableListOf(),
-        "${R.string.producer}" to mutableListOf(),
-        "${R.string.writer}" to mutableListOf(),
-        "${R.string.composer}" to mutableListOf(),
-        "${R.string.design}" to mutableListOf(),
-        "${R.string.editor}" to mutableListOf(),
-        "${R.string.operator}" to mutableListOf()
+        "Режиссер" to mutableListOf(),
+        "Актер" to mutableListOf(),
+        "Продюсер" to mutableListOf(),
+        "Сцинарист" to mutableListOf(),
+        "Композитор" to mutableListOf(),
+        "Художник" to mutableListOf(),
+        "Монтажер" to mutableListOf(),
+        "Оператор" to mutableListOf()
     )
 
     fun sortedStaff(staff: List<FilmStaff>) {
         for (person in staff) {
             if (person.nameRu.isNotBlank()) {
                 when (person.professionKey) {
-                    "DIRECTOR" -> { localStaff["${R.string.director}"]?.add(person) }
-                    "ACTOR" -> { localStaff["${R.string.actor}"]?.add(person) }
-                    "PRODUCER" -> { localStaff["${R.string.producer}"]?.add(person) }
-                    "WRITER" -> { localStaff["${R.string.writer}"]?.add(person) }
-                    "COMPOSER" -> { localStaff["${R.string.composer}"]?.add(person) }
-                    "DESIGN" -> { localStaff["${R.string.design}"]?.add(person) }
-                    "EDITOR" -> { localStaff["${R.string.editor}"]?.add(person) }
-                    "OPERATOR" -> { localStaff["${R.string.operator}"]?.add(person) }
+                    "DIRECTOR" -> { localStaff["Режиссер"]?.add(person) }
+                    "ACTOR" -> { localStaff["Актер"]?.add(person) }
+                    "PRODUCER" -> { localStaff["Продюсер"]?.add(person) }
+                    "WRITER" -> { localStaff["Сцинарист"]?.add(person) }
+                    "COMPOSER" -> { localStaff["Композитор"]?.add(person) }
+                    "DESIGN" -> { localStaff["Художник"]?.add(person) }
+                    "EDITOR" -> { localStaff["Монтажер"]?.add(person) }
+                    "OPERATOR" -> { localStaff["Оператор"]?.add(person) }
                 }
             }
         }
