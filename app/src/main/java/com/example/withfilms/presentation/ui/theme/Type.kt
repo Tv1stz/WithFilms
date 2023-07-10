@@ -23,48 +23,55 @@ val Lato = FontFamily(
 
 // Set of Material typography styles to start with
 val Typography = Typography(
-    headlineSmall = TextStyle(
+    //Название приложения
+    headlineLarge = TextStyle(
         fontFamily = JotiOne,
         fontSize = 28.sp,
-        fontWeight = FontWeight.Normal,
-    ),
+        fontWeight = FontWeight.Normal),
 
-    titleLarge = TextStyle(
+    //Заголовки экранов
+    headlineMedium = TextStyle(
         fontFamily = Lato,
         fontSize = 20.sp,
         fontWeight = FontWeight.Bold
     ),
 
-    //название фильма в деталях
-    titleMedium = TextStyle(
+    //остальные заголовки
+    titleLarge = TextStyle(
         fontFamily = Lato,
         fontSize = 18.sp,
         fontWeight = FontWeight.Bold
     ),
 
-    //текст карточек
+    // фильмы в деталях
+    titleMedium = TextStyle(
+        fontFamily = Lato,
+        fontSize = 16.sp,
+        fontWeight = FontWeight.Bold
+    ),
+
+    //фильмы, актеры
     titleSmall = TextStyle(
         fontFamily = Lato,
         fontSize = 14.sp,
         fontWeight = FontWeight.Normal
     ),
 
+    //информация об актерах
     bodyLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 0.5.sp
+        fontFamily = Lato,
+        fontWeight = FontWeight.Bold,
+        fontSize = 15.sp,
     ),
 
-    //Читать далее
+    //читать далее
     bodyMedium = TextStyle(
         fontFamily = Lato,
         fontSize = 14.sp,
         fontStyle = FontStyle.Italic
     ),
 
-    //Описание фильма
+    //описание
     bodySmall = TextStyle(
         fontFamily = Lato,
         fontSize = 13.sp,
@@ -72,11 +79,24 @@ val Typography = Typography(
         fontStyle = FontStyle.Italic
     ),
 
-    //для clips
+    labelLarge = TextStyle(
+        fontFamily = Lato,
+        fontSize = 14.sp,
+        fontWeight = FontWeight.Normal
+    ),
+
+    //остальной текст
     labelMedium = TextStyle(
         fontFamily = Lato,
         fontSize = 12.sp,
         fontWeight = FontWeight.Normal
     ),
+
+    //нижнее меню
+    labelSmall = TextStyle(
+        fontFamily = Lato,
+        fontSize = 8.sp,
+        fontWeight = FontWeight.Normal
+    )
 
 )

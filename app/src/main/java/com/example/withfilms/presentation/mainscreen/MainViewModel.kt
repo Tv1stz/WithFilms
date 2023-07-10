@@ -1,4 +1,4 @@
-package com.example.withfilms.presentation.filmsscreen
+package com.example.withfilms.presentation.mainscreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -7,29 +7,32 @@ import androidx.paging.cachedIn
 import com.example.withfilms.domain.model.Film
 import com.example.withfilms.domain.usecases.GetTopFilmsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class FilmsViewModel @Inject constructor(
+class MainViewModel @Inject constructor(
     private val getTopFilmsUseCase: GetTopFilmsUseCase
 ) : ViewModel() {
 
-    private val _filmsUiState = MutableStateFlow(emptyFlow<PagingData<Film>>())
-    val filmUiState: StateFlow<Flow<PagingData<Film>>> = _filmsUiState.asStateFlow()
+    private val _uiState = MutableStateFlow(emptyFlow<PagingData<Film>>())
+    val uiState = _uiState.asStateFlow()
 
     init {
         getTopFilms()
     }
 
     private fun getTopFilms() {
-        val films = getTopFilmsUseCase.invoke()
-            .cachedIn(viewModelScope)
-        _filmsUiState.value = films
+        viewModelScope.launch(Dispatchers.IO) {
+            val film = getTopFilmsUseCase.invoke()
+            _uiState.value = film
+        }
     }
-
 }

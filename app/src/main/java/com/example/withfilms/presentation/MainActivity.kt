@@ -12,10 +12,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
-import com.example.withfilms.presentation.navigation.BottomNavItem
 import com.example.withfilms.presentation.navigation.FilmNavGraph
 import com.example.withfilms.presentation.ui.theme.WithFilmsTheme
-import com.example.withfilms.presentation.utils.CustomBottomAppBar
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -31,22 +29,10 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val navController = rememberNavController()
-                    Scaffold(
-                        bottomBar = {
-                            CustomBottomAppBar(
-                                items = listOf(
-                                    BottomNavItem.home,
-                                    BottomNavItem.search
-                                ),
-                                navController = navController,
-                                onItemClick = { navController.navigate(it.route) }
-                            )
-                        }
-                    ) {
+                    Scaffold {
                         Box(modifier = Modifier.padding(it)) {
                             FilmNavGraph(navController = navController)
                         }
-
                     }
                 }
             }
