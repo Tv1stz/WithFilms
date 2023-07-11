@@ -5,7 +5,6 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,18 +18,16 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,64 +43,47 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.example.withfilms.R
 import com.example.withfilms.domain.model.FilmDetail
 import com.example.withfilms.domain.model.FilmStaff
 import com.example.withfilms.presentation.ui.theme.WithFilmsTheme
 import com.example.withfilms.presentation.ui.theme.blue
-import com.example.withfilms.presentation.utils.ErrorScreen
-import com.example.withfilms.presentation.utils.LoadingScreen
-import com.example.withfilms.util.LoadState
+import com.example.withfilms.presentation.utils.PersonCard
 
 @Composable
 fun FilmDetailScreen(
-    filmId: Int,
+    detail: DetailUiState,
     onBackClick: () -> Unit,
     onPersonClick: (Int) -> Unit,
-    viewModel: FilmDetailViewModel = hiltViewModel()
+    onShowMoreClick: () -> Unit,
 ) {
-
-    LaunchedEffect(key1 = true) {
-        viewModel.onStart(filmId)
-    }
-
-    val detail by viewModel.detailUiState.collectAsStateWithLifecycle()
-
-    when (detail.loadState) {
-        LoadState.ERROR -> {
-            ErrorScreen(modifier = Modifier.fillMaxSize(), onRefreshClick = {})
-        }
-
-        LoadState.LOADING -> {
-            LoadingScreen(modifier = Modifier.fillMaxSize())
-        }
-
-        LoadState.SUCCESS -> {
-
-
+    LazyColumn {
+        item {
             FilmDetailView(
                 onBackClick = onBackClick,
-                onPersonClick = onPersonClick,
                 filmDetail = detail.filmDetail!!,
-                filmStaff = detail.filmStaff
+            )
+        }
+        item {
+            PersonList(
+                persons = detail.filmStaffList,
+                onPersonClick = onPersonClick,
+                onShowMoreClick = onShowMoreClick,
             )
         }
     }
 }
 
+
 @Composable
 fun FilmDetailView(
     filmDetail: FilmDetail,
-    filmStaff: List<FilmStaff>,
     onBackClick: () -> Unit,
-    onPersonClick: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier.verticalScroll(rememberScrollState())
+        modifier = modifier
     ) {
         Box {
             AsyncImage(
@@ -140,11 +120,7 @@ fun FilmDetailView(
                 )
             }
         }
-
         FilmDescription(filmDescription = filmDetail.description)
-        PersonList(
-            persons = filmStaff, onPersonClick = onPersonClick
-        )
     }
 }
 
@@ -285,7 +261,10 @@ fun ImageWithText(
 
 @Composable
 fun PersonList(
-    persons: List<FilmStaff>, onPersonClick: (Int) -> Unit, modifier: Modifier = Modifier
+    persons: List<FilmStaff>,
+    onPersonClick: (Int) -> Unit,
+    onShowMoreClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
@@ -293,50 +272,25 @@ fun PersonList(
         Text(
             text = stringResource(id = R.string.creators),
             style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(start = 16.dp, top = 15.dp, bottom = 8.dp)
+            modifier = Modifier.padding(16.dp)
         )
-
-        LazyRow {
-            items(persons.filter { it.nameRu.isNotBlank() }) { person ->
-                PersonItem(
-                    person = person, onPersonClick = onPersonClick
+        LazyHorizontalGrid(
+            rows = GridCells.Fixed(3),
+            modifier = Modifier.height(316.dp)
+        ) {
+            items(persons.subList(0, 14)) { person ->
+                PersonCard(
+                    person = person,
+                    onPersonClick = onPersonClick,
+                    modifier = Modifier.padding(start = 8.dp, end = 8.dp, bottom = 4.dp)
+                )
+            }
+            item(span = { GridItemSpan(3) }) {
+                ShowMoreButton(
+                    onShowMoreClick = onShowMoreClick,
                 )
             }
         }
-
-        /*LazyHorizontalGrid(rows = GridCells.Fixed(3)) {
-            items(persons.filter { it.nameRu.isNotBlank() }) { person ->
-                PersonItem(
-                    person = person, onPersonClick = onPersonClick
-                )
-            }
-        }*/
-    }
-}
-
-
-@Composable
-fun PersonItem(
-    person: FilmStaff, onPersonClick: (Int) -> Unit, modifier: Modifier = Modifier
-) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
-            .padding(horizontal = 5.dp)
-            .width(86.dp)
-            .clickable { onPersonClick(person.staffId) }) {
-        AsyncImage(
-            modifier = Modifier
-                .clip(RoundedCornerShape(16.dp))
-                .height(110.dp),
-            model = person.posterUrl,
-            contentDescription = person.nameRu
-        )
-        Text(
-            text = person.nameRu,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            style = MaterialTheme.typography.titleSmall
-        )
     }
 }
 
@@ -357,27 +311,32 @@ fun RatingView(
     }
 }
 
-@Preview(showBackground = true)
 @Composable
-fun RatingViewPreview() {
-    WithFilmsTheme {
-        RatingView(rating = "9.1")
+fun ShowMoreButton(
+    onShowMoreClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier.clickable { onShowMoreClick() },
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.show_more_arrow),
+            contentDescription = null
+        )
+        Text(
+            text = stringResource(id = R.string.show_more),
+            style = MaterialTheme.typography.titleLarge
+        )
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun PersonItemPreview() {
+fun RatingViewPreview() {
     WithFilmsTheme {
-        PersonItem(person = FilmStaff(
-            staffId = 1,
-            nameRu = "Vladislav Shpiganovich",
-            nameEn = "Vladislav Shpiganovich",
-            posterUrl = "",
-            professionKey = "ACTOR",
-            description = "Jeff"
-
-        ), onPersonClick = {})
+        RatingView(rating = "9.1")
     }
 }
 
@@ -397,34 +356,15 @@ fun FilmDescriptionPreview() {
     }
 }
 
-//@Preview(showBackground = true)
-//@Composable
-//fun FilmDetailPreview() {
-//    WithFilmsTheme {
-//        FilmDetailView(
-//            onBackClick = { },
-//            onPersonClick = { },
-//            filmDetail = FilmDetail(
-//                filmId = 1,
-//                posterUrl = "",
-//                posterUrlPreview = "",
-//                year = "2100",
-//                name = "Avengers: The End",
-//                description = stringResource(id = R.string.description_preview),
-//                genre = listOf(Genre("Comedy"), Genre("Comedy"), Genre("Comedy")),
-//                filmLength = "134",
-//                rating = "9.1"
-//            ),
-//            filmStaff = listOf(
-//                FilmStaff(
-//                    staffId = 1,
-//                    nameRu = "Vladislav Shpiganovich",
-//                    nameEn = "Vladislav Shpiganovich",
-//                    posterUrl = "",
-//                    professionKey = "Actor",
-//                    description = "No nome"
-//                )
-//            )
-//        )
-//    }
-//}
+
+/*@Preview(showBackground = true)
+@Composable
+fun ShowMoreButtonPreview() {
+    WithFilmsTheme {
+        ShowMoreButton(
+            onShowMoreClick = { String, String },
+            persons = "",
+            filmName = ""
+        )
+    }
+}*/

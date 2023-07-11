@@ -70,7 +70,7 @@ fun MainScreen(
     ) {
         Box(modifier = Modifier.padding(it)) {
             Column {
-                SearchCard(
+                SearchButton(
                     onSearchClick = onSearchClick,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -210,7 +210,7 @@ fun RatingView(
 }
 
 @Composable
-fun SearchCard(
+fun SearchButton(
     modifier: Modifier = Modifier,
     onSearchClick: () -> Unit
 ) {
@@ -238,9 +238,9 @@ fun SearchCard(
 
 @Preview(showBackground = true)
 @Composable
-fun SearchCardPreview() {
+fun SearchButtonPreview() {
     WithFilmsTheme {
-        SearchCard(
+        SearchButton(
             modifier = Modifier.fillMaxWidth(),
             onSearchClick = {}
         )

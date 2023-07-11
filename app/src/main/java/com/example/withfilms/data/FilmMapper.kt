@@ -72,7 +72,7 @@ fun FilmStaffDto.toFilmStaff() = FilmStaff(
     nameRu = nameRu,
     nameEn = nameEn,
     posterUrl = posterUrl,
-    professionKey = professionKey,
+    professionText = professionText,
     description = description ?: NOTHING
 )
 

@@ -1,18 +1,18 @@
 package com.example.withfilms.presentation.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.ViewModel
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
-import com.example.withfilms.presentation.filmdetail.FilmDetailScreen
 import com.example.withfilms.presentation.mainscreen.MainScreen
+import com.example.withfilms.presentation.navigation.filmdetailnavigation.detailGraph
+import com.example.withfilms.presentation.navigation.filmdetailnavigation.navigateToDetail
 
-private const val MAIN_ROUTE = "mainScreen"
-private const val BASE_FILM_DETAIL_ROUTE = "filmDetail"
-private const val FILM_ID_KEY = "filmId"
-private const val DETAIL_FILM_DETAIL_ROUTE = "$BASE_FILM_DETAIL_ROUTE/{$FILM_ID_KEY}"
+private const val MAIN_DESTINATION = "mainScreen"
 
 @Composable
 fun FilmNavGraph(
@@ -20,33 +20,29 @@ fun FilmNavGraph(
 ) {
     NavHost(
         navController = navController,
-        startDestination = MAIN_ROUTE
+        startDestination = MAIN_DESTINATION
     ) {
-        composable(route = MAIN_ROUTE) {
+        composable(route = MAIN_DESTINATION) {
             MainScreen(
-                onFilmClick = {
-                    navController.navigateToFilmDetail(it)
+                onFilmClick = { filmId ->
+                    navController.navigateToDetail(filmId)
                 },
                 onSearchClick = {}
             )
         }
-        composable(
-            route = DETAIL_FILM_DETAIL_ROUTE,
-            arguments = listOf(
-                navArgument(FILM_ID_KEY) { type = NavType.IntType }
-            )
-        ) {
-            val filmId = it.arguments?.getInt(FILM_ID_KEY) ?: 0
-
-            FilmDetailScreen(
-                onBackClick = navController::popBackStack,
-                onPersonClick = {},
-                filmId = filmId
-            )
-        }
+        detailGraph(navController)
     }
 }
 
-fun NavHostController.navigateToFilmDetail(filmId: Int) {
-    navigate("$BASE_FILM_DETAIL_ROUTE/$filmId")
+
+
+@Composable
+inline fun <reified T : ViewModel> NavBackStackEntry.sharedViewModel(
+    navController: NavHostController,
+): T {
+    val navGraphRoute = destination.parent?.route ?: return hiltViewModel()
+    val parentEntry = remember(this) {
+        navController.getBackStackEntry(navGraphRoute)
+    }
+    return hiltViewModel(parentEntry)
 }
