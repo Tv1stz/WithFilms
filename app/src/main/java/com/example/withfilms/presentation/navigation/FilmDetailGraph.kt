@@ -1,10 +1,12 @@
-package com.example.withfilms.presentation.navigation.filmdetailnavigation
+package com.example.withfilms.presentation.navigation
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
+import com.example.withfilms.presentation.navigation.screens.filmDetailScreen
+import com.example.withfilms.presentation.navigation.screens.filmStaffScreen
 
 private const val FILM_ID_KEY = "filmId"
 private const val BASE_ROUTE = "detail"

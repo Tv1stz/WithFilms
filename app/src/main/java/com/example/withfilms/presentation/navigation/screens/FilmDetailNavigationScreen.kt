@@ -1,4 +1,4 @@
-package com.example.withfilms.presentation.navigation.filmdetailnavigation
+package com.example.withfilms.presentation.navigation.screens
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.LaunchedEffect
@@ -47,7 +47,7 @@ fun NavGraphBuilder.filmDetailScreen(
                 FilmDetailScreen(
                     detail = detail,
                     onBackClick = navController::popBackStack,
-                    onPersonClick = {},
+                    onPersonClick = { personId -> navController.navigateToPersonDetail(personId) },
                     onShowMoreClick = {
                         navController.navigateToFilmStaff()
                     }

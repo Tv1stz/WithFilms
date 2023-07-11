@@ -1,4 +1,4 @@
-package com.example.withfilms.presentation.navigation.filmdetailnavigation
+package com.example.withfilms.presentation.navigation.screens
 
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -23,7 +23,7 @@ fun NavGraphBuilder.filmStaffScreen(
             filmName = detail.filmDetail!!.name,
             staff = detail.filmStaffMap,
             onBackClick = navController::popBackStack,
-            onPersonClick = {},
+            onPersonClick = { personId -> navController.navigateToPersonDetail(personId) },
         )
     }
 }
