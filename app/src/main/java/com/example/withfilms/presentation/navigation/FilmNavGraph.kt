@@ -8,7 +8,7 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.example.withfilms.presentation.navigation.screens.mainScreen
-import com.example.withfilms.presentation.navigation.screens.personDetailScreen
+ import com.example.withfilms.presentation.navigation.screens.personDetailScreen
 
 const val MAIN_DESTINATION = "mainScreen"
 

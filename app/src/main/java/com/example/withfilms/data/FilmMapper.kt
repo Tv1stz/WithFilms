@@ -35,6 +35,7 @@ fun SearchFilmDto.toFilm() = Film(
     rating = rating ?: NO_RATING
 )
 
+
 fun PersonDetailDto.toPersonDetail() = PersonDetail(
     personId = personId,
     birthday = birthday ?: NOTHING,
@@ -43,7 +44,7 @@ fun PersonDetailDto.toPersonDetail() = PersonDetail(
     posterUrl = posterUrl,
     nameEn = nameEn ?: NOTHING,
     nameRu = nameRu ?: NOTHING,
-    films = films.toPersonFilm() ,
+    films = films.toPersonFilm(),
     sex = if (sex == MALE) MALE else FEMALE,
     age = age.toString()
 )

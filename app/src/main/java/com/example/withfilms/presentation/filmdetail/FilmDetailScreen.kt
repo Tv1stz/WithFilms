@@ -317,7 +317,7 @@ fun ShowMoreButton(
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier.clickable { onShowMoreClick() },
+        modifier = modifier.clickable { onShowMoreClick() }.padding(10.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {

@@ -1,4 +1,4 @@
-package com.example.withfilms.presentation.mainscreen
+package com.example.withfilms.presentation.main
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -28,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -171,7 +172,9 @@ fun FilmCard(
                     contentDescription = film.nameRu,
                     modifier = Modifier
                         .height(210.dp)
-                        .clip(RoundedCornerShape(16.dp))
+                        .width(140.dp)
+                        .clip(RoundedCornerShape(16.dp)),
+                    contentScale = ContentScale.FillBounds
                 )
                 Text(
                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
