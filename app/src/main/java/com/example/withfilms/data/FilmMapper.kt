@@ -1,5 +1,6 @@
 package com.example.withfilms.data
 
+import com.example.withfilms.data.db.FilmEntity
 import com.example.withfilms.data.remote.model.GenreDto
 import com.example.withfilms.data.remote.model.persondetail.PersonDetailDto
 import com.example.withfilms.data.remote.model.persondetail.PersonFilmDto
@@ -28,6 +29,21 @@ fun FilmDto.toFilm() = Film(
     rating = (rating ?: 0.0).toString(),
 )
 
+fun FilmDto.toLocalPagingFilm() = FilmEntity(
+    filmId = filmId,
+    name = nameRu,
+    posterUrl = posterUrl,
+    rating = rating ?: NO_RATING,
+    id = 0
+)
+
+fun FilmEntity.toFilm() = Film(
+    filmId = filmId,
+    nameRu = name,
+    posterUrl = posterUrl,
+    rating = rating
+)
+
 fun SearchFilmDto.toFilm() = Film(
     filmId = filmId,
     nameRu = nameRu,
@@ -45,7 +61,7 @@ fun PersonDetailDto.toPersonDetail() = PersonDetail(
     nameEn = nameEn ?: NOTHING,
     nameRu = nameRu ?: NOTHING,
     films = films.toPersonFilm(),
-    sex = if (sex == MALE) MALE else FEMALE,
+    sex = if (sex == "MALE") MALE else FEMALE,
     age = age.toString()
 )
 

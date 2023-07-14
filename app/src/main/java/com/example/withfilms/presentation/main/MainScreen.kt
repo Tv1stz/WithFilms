@@ -17,6 +17,10 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -24,6 +28,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,7 +42,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -50,16 +56,14 @@ import com.example.withfilms.presentation.ui.theme.WithFilmsTheme
 import com.example.withfilms.presentation.utils.ErrorScreen
 import com.example.withfilms.presentation.utils.LoadingScreen
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun MainScreen(
     onFilmClick: (Int) -> Unit,
     onSearchClick: () -> Unit,
     viewModel: MainViewModel = hiltViewModel(),
 ) {
-    val state = viewModel.uiState.collectAsStateWithLifecycle()
-    val films = state.value.collectAsLazyPagingItems()
-
+    val films = viewModel.filmFlow.collectAsLazyPagingItems()
     Scaffold(
         topBar = {
             MainTopBar(
@@ -69,7 +73,13 @@ fun MainScreen(
             )
         }
     ) {
-        Box(modifier = Modifier.padding(it)) {
+        val isRefresh by remember {
+            mutableStateOf(false)
+        }
+        val pullRefreshState = rememberPullRefreshState(isRefresh, { films.refresh() })
+        Box(modifier = Modifier
+            .padding(it)
+            .pullRefresh(pullRefreshState)) {
             Column {
                 SearchButton(
                     onSearchClick = onSearchClick,
@@ -77,31 +87,22 @@ fun MainScreen(
                         .fillMaxWidth()
                         .padding(horizontal = 10.dp, vertical = 6.dp)
                 )
-                when (films.loadState.refresh) {
-                    is LoadState.Loading -> {
-                        LoadingScreen(
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    }
-
-                    is LoadState.Error -> {
-                        ErrorScreen(
-                            modifier = Modifier.fillMaxSize(),
-                            onRefreshClick = { films.refresh() }
-                        )
-                    }
-
-                    is LoadState.NotLoading -> {
-                        FilmsView(
-                            films = films,
-                            onFilmClick = onFilmClick
-                        )
-                    }
+                if (films.loadState.refresh is LoadState.Loading) {
+                    LoadingScreen(
+                        modifier = Modifier.fillMaxSize()
+                    )
+                } else {
+                    FilmsView(
+                        films = films,
+                        onFilmClick = onFilmClick
+                    )
                 }
             }
+            PullRefreshIndicator(isRefresh, pullRefreshState, Modifier.align(Alignment.TopCenter))
         }
     }
 }
+
 
 @Composable
 fun FilmsView(
