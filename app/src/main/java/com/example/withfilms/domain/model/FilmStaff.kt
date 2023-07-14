@@ -5,6 +5,6 @@ data class FilmStaff(
     val nameRu: String,
     val nameEn: String,
     val posterUrl: String,
-    val professionKey: String,
+    val professionText: String,
     val description: String,
 )

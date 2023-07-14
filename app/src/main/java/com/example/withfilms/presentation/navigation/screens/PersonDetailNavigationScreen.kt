@@ -1,38 +1,38 @@
-package com.example.withfilms.presentation.navigation.filmdetailgraph.screens
+package com.example.withfilms.presentation.navigation.screens
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.withfilms.presentation.navigation.navigateToDetail
 import com.example.withfilms.presentation.persondetail.PersonDetailScreen
-import com.example.withfilms.presentation.navigation.filmdetailgraph.navigateToDetail
 
-private const val ACTOR_ID_KEY = "actorId"
-private const val BASE_ROUTE = "actorDetail"
-private const val DETAIL_ROUTE = "$BASE_ROUTE/{$ACTOR_ID_KEY}"
+private const val PERSON_ID_KEY = "personId"
+private const val BASE_ROUTE = "personDetail"
+private const val DETAIL_ROUTE = "$BASE_ROUTE/{$PERSON_ID_KEY}"
 
-fun NavGraphBuilder.actorDetailScreen(
+fun NavGraphBuilder.personDetailScreen(
     navController: NavHostController
 ) {
     composable(
         route = DETAIL_ROUTE,
         arguments = listOf(
-            navArgument(ACTOR_ID_KEY) { type = NavType.IntType }
+            navArgument(PERSON_ID_KEY) { type = NavType.IntType }
         )
     ) { backStackEntry ->
-        val actorId = backStackEntry.arguments?.getInt(ACTOR_ID_KEY) ?: 0
+        val personId = backStackEntry.arguments?.getInt(PERSON_ID_KEY) ?: 0
 
         PersonDetailScreen(
             onFilmClick = {
                 navController.navigateToDetail(it)
             },
             onBackClick = navController::popBackStack,
-            personId = actorId
+            personId = personId
         )
     }
 }
 
-fun NavHostController.navigateToActorDetail(actorId: Int) {
-    navigate("$BASE_ROUTE/$actorId")
+fun NavHostController.navigateToPersonDetail(personId: Int) {
+    navigate("$BASE_ROUTE/$personId")
 }

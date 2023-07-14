@@ -11,6 +11,7 @@
     <string name="description">Описание</string>
     <string name="creators">Создатели</string>
     <string name="read_more">Читать далее</string>
+    <string name="roll_up">Свернуть</string>
     <string name="show_more">Показать ещё</string>
     <string name="sex">Пол</string>
     <string name="birthday">День рождения:</string>
@@ -26,4 +27,6 @@
     <string name="design">Художник</string>
     <string name="editor">Монтажер</string>
     <string name="operator">Оператор</string>
+    <string name="description_preview">выжившие члены Мстителей и их союзники пытаются обратить
+        вспять разрушения, причинённые Таносом в «Войне бесконечности»</string>
 </resources>

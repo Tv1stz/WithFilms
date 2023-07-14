@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -32,11 +33,12 @@ import coil.compose.AsyncImage
 import com.example.withfilms.R
 import com.example.withfilms.domain.model.PersonDetail
 import com.example.withfilms.domain.model.PersonFilm
-import com.example.withfilms.presentation.utils.CustomTopAppBar
+import com.example.withfilms.presentation.filmdetail.RatingView
+import com.example.withfilms.presentation.ui.theme.WithFilmsTheme
 import com.example.withfilms.presentation.utils.ErrorScreen
-import com.example.withfilms.presentation.utils.LoadState.*
 import com.example.withfilms.presentation.utils.LoadingScreen
-import com.example.withfilms.presentation.utils.RatingItem
+import com.example.withfilms.presentation.utils.TopBar
+import com.example.withfilms.util.LoadState
 
 @Composable
 fun PersonDetailScreen(
@@ -46,15 +48,15 @@ fun PersonDetailScreen(
     viewModel: PersonDetailViewModel = hiltViewModel()
 ) {
     LaunchedEffect(true) {
-        viewModel.getPersonDetail(personId)
+        viewModel.onStart(personId)
     }
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     when (uiState.loadState) {
-        SUCCESS -> {
+        LoadState.SUCCESS -> {
             uiState.personDetail?.let {
-                PersonDetail(
+                PersonView(
                     personDetail = it,
                     onFilmClick = onFilmClick,
                     onBackClick = onBackClick
@@ -62,14 +64,14 @@ fun PersonDetailScreen(
             }
         }
 
-        ERROR -> {
+        LoadState.ERROR -> {
             ErrorScreen(
                 modifier = Modifier.fillMaxSize(),
-                message = stringResource(id = R.string.something_went_wrong),
+                onRefreshClick = {}
             )
         }
 
-        LOADING -> {
+        LoadState.LOADING -> {
             LoadingScreen(
                 modifier = Modifier.fillMaxSize()
             )
@@ -79,7 +81,7 @@ fun PersonDetailScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PersonDetail(
+fun PersonView(
     personDetail: PersonDetail,
     onFilmClick: (filmId: Int) -> Unit,
     onBackClick: () -> Unit,
@@ -88,9 +90,10 @@ fun PersonDetail(
     Scaffold(
         modifier = modifier,
         topBar = {
-            CustomTopAppBar(title = personDetail.nameRu) {
-                onBackClick()
-            }
+            TopBar(
+                title = personDetail.nameRu,
+                onBackClick = onBackClick
+            )
         }) { contentPadding ->
         Box(modifier = Modifier.padding(contentPadding)) {
             Column(
@@ -105,7 +108,7 @@ fun PersonDetail(
                     modifier = Modifier.padding(start = 29.dp, bottom = 8.dp)
                 )
                 LazyColumn {
-                    items(items = personDetail.films) { film ->
+                    items(personDetail.films) { film ->
                         FilmCard(
                             film = film,
                             onFilmClick = onFilmClick
@@ -199,13 +202,48 @@ fun FilmCard(
                 maxLines = 2
             )
             Spacer(modifier = Modifier.height(8.dp))
-            RatingItem(rating = film.rating)
+            RatingView(rating = film.rating)
             Divider(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(4.dp)
             )
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun FilmCardPreview() {
+    FilmCard(
+        film = PersonFilm(
+            filmId = 1,
+            nameRu = "Avengers: The End",
+            nameEn = "Avengers: The End",
+            rating = "8.1"
+        ),
+        onFilmClick = {}
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PersonInfoPreview() {
+    WithFilmsTheme {
+        PersonInfo(
+            PersonDetail(
+                personId = 1,
+                birthday = "10.06.2002",
+                death = "",
+                profession = "Actor",
+                posterUrl = "",
+                nameRu = "Vladislav Shpiganovich",
+                nameEn = "Vladislav Shpiganovich",
+                films = emptyList(),
+                sex = "Male",
+                age = "21"
+            )
+        )
     }
 }
 

@@ -1,4 +1,4 @@
-package com.example.withfilms.presentation.searchscreen
+package com.example.withfilms.presentation.search
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,17 +11,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.withfilms.R
-import com.example.withfilms.presentation.ui.theme.WithFilmsTheme
+import com.example.withfilms.presentation.main.FilmCard
 import com.example.withfilms.presentation.utils.CustomSearch
-import com.example.withfilms.presentation.utils.FilmItem
-import com.example.withfilms.presentation.utils.LoadState
+import com.example.withfilms.presentation.utils.ErrorScreen
 import com.example.withfilms.presentation.utils.LoadingScreen
-import com.example.withfilms.presentation.utils.NotFoundScreen
+import com.example.withfilms.util.LoadState
 
 @Composable
 fun SearchScreen(
@@ -39,7 +37,7 @@ fun SearchScreen(
             CustomSearch(
                 query = uiState.query,
                 onChangeQuery = {
-                    viewModel.onNewQuery(it)
+
                 },
                 hint = stringResource(id = R.string.search_films)
             )
@@ -52,16 +50,16 @@ fun SearchScreen(
                 }
 
                 LoadState.ERROR -> {
-                    NotFoundScreen(
+                    ErrorScreen(
                         modifier = Modifier.fillMaxSize(),
-                        message = stringResource(id = R.string.nothing_found),
+                        onRefreshClick = {}
                     )
                 }
 
-                else -> {
+                LoadState.SUCCESS -> {
                     LazyVerticalGrid(columns = GridCells.Fixed(2)) {
                         items(items = uiState.films, key = { it.filmId }) { film ->
-                            FilmItem(
+                            FilmCard(
                                 film = film,
                                 onFilmClick = onFilmClick,
                                 Modifier
@@ -74,17 +72,4 @@ fun SearchScreen(
         }
     }
 }
-
-@Preview(showBackground = true)
-@Composable
-fun SearchScreenPreview() {
-    WithFilmsTheme() {
-        SearchScreen(
-            modifier = Modifier.fillMaxSize(),
-            onFilmClick = {}
-        )
-    }
-}
-
-
 
